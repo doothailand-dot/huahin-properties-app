@@ -1,117 +1,148 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <base target="_top">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base target="_top"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
-    :root { --primary-green: #24d366; --app-red: #d32f2f; --st-available: #2e7d32; --st-reserved: #e65100; }
-    body { font-family: 'Kanit', sans-serif; background-color: #f8f9fa; margin: 0; padding: 0; }
-    
-    /* Header & Admin Profile */
-    .header { background: var(--primary-green); color: white; padding: 25px 15px 45px; text-align: center; border-radius: 0 0 30px 30px; position: relative; }
-    .logo-circle { width: 70px; height: 70px; background: white; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid #fff; }
-    .logo-circle img { width: 90%; object-fit: contain; }
-    .admin-top { width: 40px; height: 40px; border-radius: 50%; border: 2px solid white; position: absolute; right: 20px; top: 20px; object-fit: cover; }
-
+    :root { 
+      --primary-green: #24d366; --app-red: #d32f2f;
+      --st-available: #e8f5e9; --st-available-txt: #2e7d32;
+      --st-reserved: #fff3e0; --st-reserved-txt: #e65100;
+      --st-sold: #ffebee; --st-sold-txt: #c62828;
+    }
+    body { font-family: 'Kanit', sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+    #loadingScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.5s; }
+    .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-green); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .header { background-color: var(--primary-green); color: white; padding: 20px 15px 40px; text-align: center; border-radius: 0 0 30px 30px; position: relative; }
+    .logo-circle { width: 60px; height: 60px; background: white; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .logo-circle img { width: 85%; }
     .container { padding: 15px; max-width: 450px; margin: 0 auto 80px; }
-    .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
-    
-    /* Compact Card Style */
-    .prop-card { display: flex; background: white; border-radius: 12px; margin-bottom: 12px; padding: 10px; position: relative; border-left: 5px solid var(--primary-green); box-shadow: 0 2px 5px rgba(0,0,0,0.05); align-items: center; }
-    .prop-img-box { width: 85px; height: 85px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
-    .prop-img { width: 100%; height: 100%; object-fit: cover; }
-    .prop-info { flex-grow: 1; padding-left: 12px; text-align: left; }
-    .prop-title { font-weight: 600; font-size: 15px; color: #333; margin-bottom: 3px; }
-    .prop-price { color: var(--app-red); font-weight: 600; font-size: 14px; }
-    .prop-specs { display: flex; gap: 10px; font-size: 11px; color: #888; margin-top: 5px; }
-    
-    /* Status Badge Chips */
-    .status-chip { position: absolute; top: 10px; right: 10px; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 10px; display: flex; align-items: center; gap: 4px; }
-    .chip-available { background: #e8f5e9; color: #2e7d32; }
-    .chip-reserved { background: #fff3e0; color: #e65100; }
-    
-    .menu-btn { width: 100%; padding: 16px; border: none; border-radius: 50px; background: var(--primary-green); color: white; font-weight: 600; font-size: 16px; margin-bottom: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: left; }
+    .input-group { margin-bottom: 15px; }
+    .input-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
+    .input-group input, .input-group textarea { width: 100%; padding: 12px; border: 1.5px solid #eee; border-radius: 10px; box-sizing: border-box; font-family: 'Kanit'; }
+    .menu-btn { width: 100%; padding: 16px; background: var(--primary-green); color: white; border: none; border-radius: 50px; font-weight: 600; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .house-card { display: flex; background: white; border-radius: 12px; margin-bottom: 10px; padding: 10px; align-items: center; border-left: 5px solid var(--primary-green); position: relative; }
+    .house-img { width: 75px; height: 75px; border-radius: 8px; object-fit: cover; }
+    .house-info { flex: 1; padding: 0 12px; text-align: left; }
+    .status-badge { position: absolute; top: 10px; right: 10px; font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 600; }
     .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; border-top: 1px solid #eee; z-index: 1000; }
-    .nav-item { flex: 1; padding: 12px 0; text-align: center; color: #999; font-size: 11px; cursor: pointer; }
+    .nav-item { flex: 1; padding: 12px 0; text-align: center; font-size: 11px; color: #999; cursor: pointer; }
     .nav-item.active { color: var(--primary-green); }
   </style>
 </head>
 <body onload="initApp()">
 
-  <div id="loadingScreen"><div class="spinner"></div><p>Loading...</p></div>
+  <div id="loadingScreen"><div class="spinner"></div><p>HUAHIN.PROPERTIES</p></div>
 
   <div class="header">
-    <img src="" id="adminTopImg" class="admin-top" style="display:none">
     <div class="logo-circle"><img src="https://img5.pic.in.th/file/secure-sv1/222892.jpg"></div>
-    <h1 style="margin:0; font-size:18px;">HUAHIN.PROPERTIES</h1>
-    <p id="subTitle" style="margin:5px 0 0; font-size:13px; opacity:0.8;">Property Portal</p>
+    <h1 style="font-size: 18px; margin: 0;">HUAHIN.PROPERTIES</h1>
   </div>
 
   <div class="container">
-    <div id="startPage" style="display:none; text-align: center;">
-      <div class="card">
-        <h3>ยินดีต้อนรับ</h3>
-        <button class="menu-btn" onclick="enterAsCustomer()"><i class="fa-solid fa-house-user"></i> สำหรับลูกค้าทั่วไป</button>
-        <div style="margin: 20px 0; color: #ccc;">- หรือ -</div>
-        <button class="menu-btn" onclick="switchPage('loginPage')" style="background:#666;"><i class="fa-solid fa-user-lock"></i> เข้าสู่ระบบเอเจนต์</button>
-      </div>
-    </div>
-
-    <div id="propertiesPage" style="display:none;">
-      <h3 id="pageTitle" style="text-align:left; margin-bottom:15px;">🏠 รายการทั้งหมด</h3>
-      <div id="propertiesList"></div>
+    <div id="startPage" class="card" style="display:none; text-align: center;">
+      <h3>Property Portal</h3>
+      <button class="menu-btn" onclick="switchPage('loginPage')">เอเจนต์เข้าสู่ระบบ</button>
+      <div style="margin: 15px 0; color:#ccc;">- หรือ -</div>
+      <button class="menu-btn" onclick="openCustomerView()" style="background:#666;">สำหรับลูกค้าทั่วไป</button>
     </div>
 
     <div id="loginPage" class="card" style="display:none;">
-        <h3 id="hLogin">Login</h3>
-        <input type="tel" id="lPhone" placeholder="08x-xxxxxxx" style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
-        <input type="password" id="lPass" placeholder="Password" style="width:100%; padding:12px; margin-bottom:15px; border-radius:10px; border:1px solid #ddd;">
-        <button class="menu-btn" onclick="handleLogin()">เข้าสู่ระบบ</button>
-        <span onclick="switchPage('startPage')" style="text-decoration:underline; cursor:pointer; font-size:13px; color:#666;">กลับหน้าหลัก</span>
+      <h3>Login</h3>
+      <div class="input-group"><label>เบอร์โทรศัพท์</label><input type="tel" id="lPhone"></div>
+      <div class="input-group"><label>รหัสผ่าน</label><input type="password" id="lPass"></div>
+      <button class="menu-btn" onclick="handleLogin()">เข้าสู่ระบบ</button>
+      <span onclick="switchPage('registerPage')" class="link-text" style="display:block; margin-top:15px; text-align:center; color:var(--primary-green); cursor:pointer;">สมัครสมาชิกใหม่</span>
+    </div>
+
+    <div id="registerPage" class="card" style="display:none;">
+      <h3>Register</h3>
+      <div class="input-group"><label>ชื่อ-นามสกุล</label><input type="text" id="rName"></div>
+      <div class="input-group"><label>เบอร์โทรศัพท์</label><input type="tel" id="rPhone"></div>
+      <div class="input-group"><label>ไอดีไลน์</label><input type="text" id="rLine"></div>
+      <div class="input-group"><label>รหัสผ่าน</label><input type="password" id="rPass"></div>
+      <button class="menu-btn" onclick="handleRegister()">ส่งข้อมูลสมัครสมาชิก</button>
+    </div>
+
+    <div id="visitPage" class="card" style="display:none;">
+      <h3><i class="fa-solid fa-location-dot"></i> บันทึกพาชมบ้าน</h3>
+      <div style="background:#f8f9fa; padding:10px; border-radius:10px; margin-bottom:15px; font-size:13px;">
+        <div><b>เอเจนต์:</b> <span id="vDispName">...</span></div>
+        <div><b>รหัส:</b> <span id="vDispId" style="color:var(--primary-green); font-weight:bold;">...</span></div>
+      </div>
+      <div class="input-group"><label>รหัสบ้าน (Property ID)</label><input type="text" id="vPropId"></div>
+      <div class="input-group"><label>ชื่อลูกค้า</label><input type="text" id="vClientName"></div>
+      <div class="input-group"><label>บันทึก</label><textarea id="vNotes"></textarea></div>
+      <button class="menu-btn" onclick="handleRecordVisit()">ยืนยันข้อมูล</button>
+    </div>
+
+    <div id="propertiesPage" style="display:none;">
+      <h3 style="margin-left:5px;">🏠 สต็อกบ้าน</h3>
+      <div id="propertiesList"></div>
     </div>
   </div>
 
   <div id="bottomNav" class="bottom-nav" style="display:none;">
-    <div class="nav-item active" onclick="loadCategory('home')"><i class="fa-solid fa-house"></i><div>Home</div></div>
-    <div class="nav-item" onclick="loadCategory('sale')"><i class="fa-solid fa-tags"></i><div>ขาย</div></div>
-    <div class="nav-item" onclick="loadCategory('rent')"><i class="fa-solid fa-key"></i><div>เช่า</div></div>
-    <div class="nav-item" id="adminMenu" style="display:none;" onclick="switchPage('profilePage')"><i class="fa-solid fa-user-gear"></i><div>จัดการ</div></div>
+    <div class="nav-item active" onclick="openProperties('home')" id="navHome"><i class="fa-solid fa-house"></i><div>Home</div></div>
+    <div class="nav-item" onclick="openProperties('sale')"><i class="fa-solid fa-tags"></i><div>ขาย</div></div>
+    <div class="nav-item" onclick="openProperties('rent')"><i class="fa-solid fa-key"></i><div>เช่า</div></div>
+    <div class="nav-item" onclick="handleLogout()"><i class="fa-solid fa-sign-out"></i><div>ออก</div></div>
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyLB6o3Nqm8QtYSkneLHDva0T8hxkLHVl5iu1EM2IrswK8uyPkGQ4VlvP77nXHIBMB7KA/exec";
-    let currentRole = "customer", allData = [];
+    const API_URL = "https://script.google.com/macros/s/AKfycbyLB6o3Nqm8QtYSkneLHDva0T8hxkLHVl5iu1EM2IrswK8uyPkGQ4VlvP77nXHIBMB7KA/exec"; 
+    let currentRole = "customer", globalProfile = null, allHouses = [];
 
     async function initApp() {
-      const s = await callApi({ action: "getSettings" });
-      if(s?.settings?.admin_photo_url) { document.getElementById('adminTopImg').src = s.settings.admin_photo_url; document.getElementById('adminTopImg').style.display='block'; }
-      
+      const urlParams = new URLSearchParams(window.location.search);
+      const target = urlParams.get('page');
       const ph = localStorage.getItem('agent_phone'), ps = localStorage.getItem('agent_pass');
-      if (ph && ps) handleLogin(ph, ps); else switchPage('startPage');
+
+      if (ph && ps) {
+        const res = await callApi({ action: "login", phone: ph, password: ps });
+        if (res?.success) {
+          globalProfile = res.profile; currentRole = res.role;
+          if (target === 'visit') showVisitPage();
+          else if (target === 'properties') openProperties('home');
+          else switchPage('startPage');
+        } else switchPage('loginPage');
+      } else {
+        if (target === 'register') switchPage('registerPage');
+        else switchPage('startPage');
+      }
       document.getElementById('loadingScreen').style.display = 'none';
     }
 
-    function enterAsCustomer() { currentRole = "customer"; switchPage('propertiesPage'); loadCategory('home'); }
-
-    async function handleLogin(ph, ps) {
-      ph = ph || document.getElementById('lPhone').value; ps = ps || document.getElementById('lPass').value;
-      const res = await callApi({ action: "login", phone: ph, password: ps });
-      if(res?.success) {
-        currentRole = res.role;
-        localStorage.setItem('agent_phone', ph); localStorage.setItem('agent_pass', ps);
-        if(currentRole === 'admin') document.getElementById('adminMenu').style.display = 'block';
-        switchPage('propertiesPage'); loadCategory('home');
-      } else if(!ph) switchPage('startPage');
+    function switchPage(id) {
+      ['startPage','loginPage','registerPage','visitPage','propertiesPage'].forEach(p => document.getElementById(p).style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+      document.getElementById('bottomNav').style.display = (id === 'propertiesPage') ? 'flex' : 'none';
     }
 
-    async function loadCategory(cat) {
-      if(allData.length === 0) {
+    function showVisitPage() {
+      document.getElementById('vDispName').innerText = globalProfile.name;
+      document.getElementById('vDispId').innerText = globalProfile.agentId;
+      switchPage('visitPage');
+    }
+
+    async function handleRecordVisit() {
+      const data = { action: "recordVisit", agentId: globalProfile.agentId, agentName: globalProfile.name, agentPhone: globalProfile.phone, propertyId: document.getElementById('vPropId').value, clientName: document.getElementById('vClientName').value, notes: document.getElementById('vNotes').value };
+      if(!data.propertyId || !data.clientName) return Swal.fire('เตือน', 'กรอกรหัสบ้านและชื่อลูกค้า', 'warning');
+      Swal.showLoading();
+      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(data) }).then(r => r.json());
+      Swal.close();
+      if(res.success) Swal.fire('สำเร็จ', 'บันทึกเรียบร้อย', 'success').then(() => location.reload());
+    }
+
+    async function openProperties(cat) {
+      switchPage('propertiesPage');
+      if(allHouses.length === 0) {
         Swal.showLoading();
-        allData = await callApi({ action: "getProperties", role: currentRole, lang: "th" });
+        allHouses = await callApi({ action: "getProperties", role: currentRole, lang: "th" });
         Swal.close();
       }
       renderList(cat);
@@ -119,41 +150,44 @@
 
     function renderList(cat) {
       const list = document.getElementById('propertiesList'); list.innerHTML = '';
-      allData.forEach(p => {
-        const isAvail = p.status.toLowerCase() === 'available';
-        const chipClass = isAvail ? 'chip-available' : 'chip-reserved';
+      const filtered = allHouses.filter(h => cat === 'home' || h[cat] === "Y" || h[cat] === "TRUE");
+      filtered.forEach(h => {
+        const s = h.status?.toLowerCase() || 'available';
+        const sColor = s==='available' ? 'var(--st-available-txt)' : (s==='reserved' ? 'var(--st-reserved-txt)' : 'var(--st-sold-txt)');
+        const sBg = s==='available' ? 'var(--st-available)' : (s==='reserved' ? 'var(--st-reserved)' : 'var(--st-sold)');
         
-        let card = `
-          <div class="prop-card">
-            <div class="prop-img-box"><img src="${p.img || 'https://placehold.co/100'}" class="prop-img"></div>
-            <div class="prop-info">
-              <div class="prop-title">${p.project}</div>
-              <div class="prop-price">฿ ${p.price}</div>
-              <div class="prop-specs">
-                <span><i class="fa-solid fa-bed"></i> ${p.bed}</span>
-                <span><i class="fa-solid fa-bath"></i> ${p.bath}</span>
-                <span>ID: ${p.id}</span>
-              </div>`;
-        
-        // ข้อมูลตามสิทธิ์
-        if(currentRole !== 'customer') {
-          card += `<div style="font-size:11px; color:green; margin-top:5px; border-top:1px dashed #eee; padding-top:5px;">💰 Commission: ${p.commission || '-'}</div>`;
-        }
-        if(currentRole === 'admin') {
-          card += `<div style="font-size:11px; color:orange;">🔒 Cost: ${p.net_price} | Owner: ${p.owner_phone}</div>`;
-        }
-        
-        card += `</div><div class="status-chip ${chipClass}"><span style="width:6px; height:6px; background:currentColor; border-radius:50%;"></span> ${p.status}</div></div>`;
-        list.innerHTML += card;
+        let html = `<div class="house-card" style="border-left-color:${sColor}">
+          <img src="${h.img || 'https://placehold.co/100'}" class="house-img">
+          <div class="house-info">
+            <div class="house-title">${h.title}</div>
+            <div style="color:var(--app-red); font-weight:600;">฿ ${h.price}</div>
+            <div style="font-size:11px; color:#999; margin-top:3px;"><i class="fa-solid fa-bed"></i> ${h.bed} <i class="fa-solid fa-bath"></i> ${h.bath} | ID: ${h.id}</div>`;
+        if(currentRole !== 'customer') html += `<div style="font-size:11px; color:var(--primary-green); margin-top:5px; border-top:1px dashed #eee; padding-top:5px;">💰 คอมฯ: <b>${h.commission || '-'}</b></div>`;
+        html += `</div><div class="status-badge" style="background:${sBg}; color:${sColor}">${h.status}</div></div>`;
+        list.innerHTML += html;
       });
     }
 
-    function switchPage(id) {
-      ['startPage','loginPage','propertiesPage'].forEach(p => document.getElementById(p).style.display = 'none');
-      document.getElementById(id).style.display = 'block';
-      document.getElementById('bottomNav').style.display = (id === 'propertiesPage') ? 'flex' : 'none';
+    async function handleLogin() {
+      const ph = document.getElementById('lPhone').value, ps = document.getElementById('lPass').value;
+      Swal.showLoading();
+      const res = await callApi({ action: "login", phone: ph, password: ps });
+      Swal.close();
+      if(res?.success) { localStorage.setItem('agent_phone', ph); localStorage.setItem('agent_pass', ps); location.reload(); }
+      else Swal.fire('Error', 'เบอร์หรือรหัสผ่านผิด', 'error');
     }
-    async function callApi(p) { const q = new URLSearchParams(p).toString(); const r = await fetch(`${API_URL}?${q}`); return await r.json(); }
+
+    async function handleRegister() {
+      const data = { name: document.getElementById('rName').value, phone: document.getElementById('rPhone').value, lineId: document.getElementById('rLine').value, password: document.getElementById('rPass').value };
+      Swal.showLoading();
+      const res = await callApi({ action: "register", data: JSON.stringify(data) });
+      Swal.close();
+      if(res.success) Swal.fire('สำเร็จ', 'รออนุมัติครับ', 'success').then(() => switchPage('loginPage'));
+    }
+
+    async function callApi(p) { return await fetch(`${API_URL}?${new URLSearchParams(p).toString()}`).then(r => r.json()); }
+    function handleLogout() { localStorage.clear(); location.reload(); }
+    function openCustomerView() { currentRole = "customer"; openProperties('home'); }
   </script>
 </body>
 </html>
