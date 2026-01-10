@@ -14,9 +14,8 @@
     .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid var(--primary-green); border-radius: 50%; animation: spin 1s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     .flag-bar { background: #fff; padding: 12px 5px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 1000; }
-    .flag-icon { width: 30px; height: 20px; cursor: pointer; border-radius: 3px; border: 1px solid #ddd; transition: 0.3s; }
-    .flag-icon:hover { transform: scale(1.2); }
-    .header { background-color: var(--primary-green); color: white; padding: 20px 20px 50px; text-align: center; border-radius: 0 0 30px 30px; position: relative; }
+    .flag-icon { width: 30px; height: 20px; cursor: pointer; border-radius: 3px; border: 1px solid #ddd; }
+    .header { background-color: var(--primary-green); color: white; padding: 20px 20px 50px; text-align: center; border-radius: 0 0 30px 30px; }
     .logo-circle { width: 85px; height: 85px; background: white; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .logo-circle img { width: 90%; height: 90%; object-fit: contain; }
     .container { padding: 20px; max-width: 450px; margin: 20px auto 40px; }
@@ -30,8 +29,6 @@
     .submit-btn { width: 100%; padding: 16px; background: var(--primary-green); color: white; border: none; border-radius: 50px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 10px; box-shadow: 0 6px 15px rgba(36,211,102,0.3); }
     .house-card { background: white; border-radius: 15px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .house-img { width: 100%; height: 200px; object-fit: cover; }
-    .house-info { padding: 15px; }
-    .house-price { color: var(--primary-green); font-size: 22px; font-weight: bold; }
     .p-img-preview { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--primary-green); display: block; margin: 0 auto 10px; object-fit: cover; }
   </style>
 </head>
@@ -92,18 +89,17 @@
   </div>
 
   <script>
-    // ⚠️ ลิงก์ API ล่าสุดของคุณเจษฎ์
     const API_URL = "https://script.google.com/macros/s/AKfycbxprgFzZJVwq7XFcKE4CDRGI5VpkZrkXr22tH9iiOozGb3dj3F99sEloOBSWQSZE6AY/exec"; 
 
     const translations = {
-      th: { subTitle: "ระบบตัวแทน", hLogin: "เข้าสู่ระบบ", btnLogin: "Login", mEditProfile: "แก้ไขโปรไฟล์", mHouseList: "ลิสต์รายชื่อบ้าน", btnLogoutMenu: "ออกจากระบบ", lblPId: "รหัสสมาชิก", lblPName: "ชื่อ-นามสกุล", lblPPhone: "เบอร์โทรศัพท์", lblPLine: "LINE ID", lblPPass: "Password", lblPNotes: "บันทึกส่วนตัว", btnSave: "บันทึกข้อมูล", stPrefix: "สถานะ: ", stActive: "อนุมัติแล้ว", stPending: "รออนุมัติ", stAdmin: "แอดมิน", hCatalogTitle: "🏠 รายการทรัพย์สิน" },
-      gb: { subTitle: "Agent Portal", hLogin: "Login", btnLogin: "Login", mEditProfile: "Edit Profile", mHouseList: "Property List", btnLogoutMenu: "Logout", lblPId: "Agent ID", lblPName: "Full Name", lblPPhone: "Phone", lblPLine: "LINE ID", lblPPass: "Password", lblPNotes: "Notes", btnSave: "Save", stPrefix: "Status: ", stActive: "Active", stPending: "Pending", stAdmin: "Admin", hCatalogTitle: "🏠 Property List" },
-      cn: { subTitle: "代理门户", hLogin: "登录", btnLogin: "登录", mEditProfile: "修改资料", mHouseList: "房产列表", btnLogoutMenu: "登出", lblPId: "代理编号", lblPName: "姓名", lblPPhone: "手机号码", lblPLine: "LINE ID", lblPPass: "密码", lblPNotes: "备注", btnSave: "保存资料", stPrefix: "状态: ", stActive: "已批准", stPending: "待批准", stAdmin: "管理员", hCatalogTitle: "🏠 房产列表" },
-      ru: { subTitle: "Портал агента", hLogin: "Вход", btnLogin: "Войти", mEditProfile: "Профиль", mHouseList: "Список домов", btnLogoutMenu: "Выйти", lblPId: "ID агента", lblPName: "Имя", lblPPhone: "Телефон", lblPLine: "LINE ID", lblPPass: "Пароль", lblPNotes: "Заметки", btnSave: "Сохранить", stPrefix: "Статус: ", stActive: "Одобрено", stPending: "В ожидании", stAdmin: "Админ", hCatalogTitle: "🏠 Список домов" },
-      se: { subTitle: "Agentportal", hLogin: "Logga in", btnLogin: "Logga in", mEditProfile: "Ändra profil", mHouseList: "Huslista", btnLogoutMenu: "Logga ut", lblPId: "Agent ID", lblPName: "Namn", lblPPhone: "Telefon", lblPLine: "LINE ID", lblPPass: "Lösenord", lblPNotes: "Anteckningar", btnSave: "Spara", stPrefix: "Status: ", stActive: "Godkänd", stPending: "Väntar", stAdmin: "Admin", hCatalogTitle: "🏠 Huslista" },
-      de: { subTitle: "Agentenportal", hLogin: "Login", btnLogin: "Login", mEditProfile: "Profil ändern", mHouseList: "Hausliste", btnLogoutMenu: "Abmelden", lblPId: "Agenten-ID", lblPName: "Name", lblPPhone: "Telefon", lblPLine: "LINE ID", lblPPass: "Passwort", lblPNotes: "Notizen", btnSave: "Speichern", stPrefix: "Status: ", stActive: "Genehmigt", stPending: "Ausstehend", stAdmin: "Admin", hCatalogTitle: "🏠 Hausliste" },
-      kr: { subTitle: "에이전트 포털", hLogin: "로그인", btnLogin: "로그인", mEditProfile: "프로파일 수정", mHouseList: "매물 목록", btnLogoutMenu: "로그아웃", lblPId: "에이전트 ID", lblPName: "이름", lblPPhone: "전화번호", lblPLine: "LINE ID", lblPPass: "비밀번호", lblPNotes: "메모", btnSave: "저장", stPrefix: "상태: ", stActive: "승인됨", stPending: "대기 중", stAdmin: "관리자", hCatalogTitle: "🏠 매물 목록" },
-      jp: { subTitle: "代理店ポータル", hLogin: "ログイン", btnLogin: "ログイン", mEditProfile: "プロフィール編集", mHouseList: "物件リスト", btnLogoutMenu: "ログアウト", lblPId: "会員ID", lblPName: "氏名", lblPPhone: "電話번호", lblPLine: "LINE ID", lblPPass: "パスワード", lblPNotes: "メモ", btnSave: "保存", stPrefix: "ステータス: ", stActive: "承認済み", stPending: "保留中", stAdmin: "管理者", hCatalogTitle: "🏠 物件リスト" }
+      th: { subTitle: "ระบบตัวแทน", hLogin: "เข้าสู่ระบบ", btnLogin: "Login", lblLPhone: "เบอร์โทรศัพท์", lblLPass: "รหัสผ่าน", mEditProfile: "แก้ไขโปรไฟล์", mHouseList: "ลิสต์รายชื่อบ้าน", btnLogoutMenu: "ออกจากระบบ", lblPId: "รหัสสมาชิก", lblPName: "ชื่อ-นามสกุล", lblPPhone: "เบอร์โทรศัพท์", lblPLine: "LINE ID", lblPPass: "Password", lblPNotes: "บันทึกส่วนตัว", btnSave: "บันทึกข้อมูล", stPrefix: "สถานะ: ", stActive: "อนุมัติแล้ว", stPending: "รออนุมัติ", stAdmin: "แอดมิน", hCatalogTitle: "🏠 รายการทรัพย์สิน" },
+      gb: { subTitle: "Agent Portal", hLogin: "Login", btnLogin: "Login", lblLPhone: "Phone Number", lblLPass: "Password", mEditProfile: "Edit Profile", mHouseList: "Property List", btnLogoutMenu: "Logout", lblPId: "Agent ID", lblPName: "Full Name", lblPPhone: "Phone", lblPLine: "LINE ID", lblPPass: "Password", lblPNotes: "Notes", btnSave: "Save", stPrefix: "Status: ", stActive: "Active", stPending: "Pending", stAdmin: "Admin", hCatalogTitle: "🏠 Property List" },
+      cn: { subTitle: "代理门户", hLogin: "登录", btnLogin: "登录", lblLPhone: "电话号码", lblLPass: "密码", mEditProfile: "修改资料", mHouseList: "房产列表", btnLogoutMenu: "登出", lblPId: "代理编号", lblPName: "姓名", lblPPhone: "手机号码", lblPLine: "LINE ID", lblPPass: "密码", lblPNotes: "备注", btnSave: "保存资料", stPrefix: "状态: ", stActive: "已批准", stPending: "待批准", stAdmin: "管理员", hCatalogTitle: "🏠 房产列表" },
+      ru: { subTitle: "Портал агента", hLogin: "Вход", btnLogin: "Войти", lblLPhone: "Телефон", lblLPass: "Пароль", mEditProfile: "Профиль", mHouseList: "Список домов", btnLogoutMenu: "Выйти", lblPId: "ID агента", lblPName: "Имя", lblPPhone: "Телефон", lblPLine: "LINE ID", lblPPass: "Пароль", lblPNotes: "Заметки", btnSave: "Сохранить", stPrefix: "Статус: ", stActive: "Одобрено", stPending: "В ожидании", stAdmin: "Админ", hCatalogTitle: "🏠 Список домов" },
+      se: { subTitle: "Agentportal", hLogin: "Logga in", btnLogin: "Logga in", lblLPhone: "Telefon", lblLPass: "Lösenord", mEditProfile: "Ändra profil", mHouseList: "Huslista", btnLogoutMenu: "Logga ut", lblPId: "Agent ID", lblPName: "Namn", lblPPhone: "Telefon", lblPLine: "LINE ID", lblPPass: "Lösenord", lblPNotes: "Anteckningar", btnSave: "Spara", stPrefix: "Status: ", stActive: "Godkänd", stPending: "Väntar", stAdmin: "Admin", hCatalogTitle: "🏠 Huslista" },
+      de: { subTitle: "Agentenportal", hLogin: "Login", btnLogin: "Login", lblLPhone: "Telefon", lblLPass: "Passwort", mEditProfile: "Profil ändern", mHouseList: "Hausliste", btnLogoutMenu: "Abmelden", lblPId: "Agenten-ID", lblPName: "Name", lblPPhone: "Telefon", lblPLine: "LINE ID", lblPPass: "Passwort", lblPNotes: "Notizen", btnSave: "Speichern", stPrefix: "Status: ", stActive: "Genehmigt", stPending: "Ausstehend", stAdmin: "Admin", hCatalogTitle: "🏠 Hausliste" },
+      kr: { subTitle: "에이전트 포털", hLogin: "로그인", btnLogin: "로그인", lblLPhone: "전화번호", lblLPass: "비밀번호", mEditProfile: "프로파일 수정", mHouseList: "매물 목록", btnLogoutMenu: "로그아웃", lblPId: "에이전트 ID", lblPName: "이름", lblPPhone: "전화번호", lblPLine: "LINE ID", lblPPass: "비밀번호", lblPNotes: "메모", btnSave: "저장", stPrefix: "상태: ", stActive: "승인됨", stPending: "대기 중", stAdmin: "관리자", hCatalogTitle: "🏠 매물 목록" },
+      jp: { subTitle: "代理店ポータル", hLogin: "ログイン", btnLogin: "ログイン", lblLPhone: "電話番号", lblLPass: "パスワード", mEditProfile: "プロフィール編集", mHouseList: "物件リスト", btnLogoutMenu: "ログアウト", lblPId: "会員ID", lblPName: "氏名", lblPPhone: "電話번호", lblPLine: "LINE ID", lblPPass: "パスワード", lblPNotes: "メモ", btnSave: "保存", stPrefix: "ステータス: ", stActive: "承認済み", stPending: "保留中", stAdmin: "管理者", hCatalogTitle: "🏠 物件リスト" }
     };
 
     let userStatus = "", curPhone = "", curLang = 'th', isAdmin = false;
@@ -112,28 +108,19 @@
       try {
         const query = new URLSearchParams(params).toString();
         const response = await fetch(`${API_URL}?${query}`);
-        if (!response.ok) throw new Error('Network error');
         return await response.json();
-      } catch (e) {
-        console.error("API Error:", e);
-        return null;
-      }
+      } catch (e) { return null; }
     }
 
     async function initApp() {
-      try {
-        const ph = localStorage.getItem('agent_phone'), ps = localStorage.getItem('agent_pass');
-        if (ph && ps) {
-          const res = await callApi({ action: "login", phone: ph, password: ps });
-          if (res && res.success) { loadUserData(res.profile); switchPage('menuPage'); } 
-          else { switchPage('loginPage'); }
-        } else { switchPage('loginPage'); }
-      } catch (e) {
-        switchPage('loginPage');
-      } finally {
-        document.getElementById('loadingScreen').style.opacity = '0';
-        setTimeout(() => { document.getElementById('loadingScreen').style.display = 'none'; }, 500);
-      }
+      const ph = localStorage.getItem('agent_phone'), ps = localStorage.getItem('agent_pass');
+      if (ph && ps) {
+        const res = await callApi({ action: "login", phone: ph, password: ps });
+        if (res && res.success) { loadUserData(res.profile); switchPage('menuPage'); } 
+        else { switchPage('loginPage'); }
+      } else { switchPage('loginPage'); }
+      document.getElementById('loadingScreen').style.opacity = '0';
+      setTimeout(() => { document.getElementById('loadingScreen').style.display = 'none'; }, 500);
     }
 
     function changeLang(lang) {
@@ -165,11 +152,8 @@
       const data = translations[curLang] || translations['gb'];
       const topBadge = document.getElementById('topStatusBadge'), pBadge = document.getElementById('pBadge');
       let translatedStatus = status, bgColor = 'var(--status-pending)';
-      
       if(status === 'แอดมิน' || status === 'Admin') { translatedStatus = data.stAdmin; bgColor = 'var(--status-admin)'; }
       else if(status === 'อนุมัติแล้ว' || status === 'Active') { translatedStatus = data.stActive; bgColor = 'var(--status-active)'; }
-      else if(status === 'รออนุมัติ' || status === 'Pending') { translatedStatus = data.stPending; bgColor = 'var(--status-pending)'; }
-      
       topBadge.innerText = (data.stPrefix || "Status: ") + translatedStatus; 
       topBadge.style.backgroundColor = bgColor;
       if(pBadge) { pBadge.innerText = translatedStatus; pBadge.style.backgroundColor = bgColor; }
@@ -183,15 +167,12 @@
       const res = await callApi({ action: "login", phone: ph, password: ps });
       document.getElementById('loadingScreen').style.opacity = '0';
       setTimeout(() => { document.getElementById('loadingScreen').style.display = 'none'; }, 500);
-      
       if (res && res.success) { 
         localStorage.setItem('agent_phone', ph); 
         localStorage.setItem('agent_pass', ps); 
         loadUserData(res.profile); 
         switchPage('menuPage'); 
-      } else { 
-        Swal.fire('Error', 'เบอร์โทรศัพท์หรือรหัสผ่านไม่ถูกต้อง', 'error'); 
-      }
+      } else { Swal.fire('Error', 'เบอร์โทรศัพท์หรือรหัสผ่านไม่ถูกต้อง', 'error'); }
     }
 
     async function checkActive(feature) {
@@ -202,7 +183,7 @@
     }
 
     async function loadCatalog() {
-      Swal.fire({ title: 'Loading Properties...', didOpen: () => Swal.showLoading() });
+      Swal.fire({ title: 'Loading...', didOpen: () => Swal.showLoading() });
       const properties = await callApi({ action: "getProperties", lang: curLang });
       const listDiv = document.getElementById('catalogList'); listDiv.innerHTML = '';
       if(properties) {
@@ -212,14 +193,13 @@
               <img src="${house[4] || 'https://placehold.co/600x400'}" class="house-img">
               <div class="house-info">
                 <div class="house-price">฿ ${house[2]}</div>
-                <div style="font-weight:600; font-size:18px;">${house[1]}</div>
-                <div style="font-size:14px; color:#666; margin-top:10px;">${house[3]}</div>
+                <div style="font-weight:600;">${house[1]}</div>
+                <div style="font-size:14px; color:#666; margin-top:5px;">${house[3]}</div>
               </div>
             </div>`;
         });
       }
-      switchPage('catalogPage');
-      Swal.close();
+      switchPage('catalogPage'); Swal.close();
     }
 
     async function handleUpdateProfile() {
