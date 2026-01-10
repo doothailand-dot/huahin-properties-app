@@ -15,8 +15,10 @@
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     .flag-bar { background: #fff; padding: 10px 5px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 1000; }
     .flag-icon { width: 28px; height: 18px; cursor: pointer; border-radius: 2px; border: 1px solid #ddd; }
+    
+    /* สไตล์ Header ปกติ */
     .header { background-color: var(--primary-green); color: white; padding: 20px 15px 40px; text-align: center; border-radius: 0 0 30px 30px; }
-    .logo-circle { width: 65px; height: 65px; background: white; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid #fff; }
+    .logo-circle { width: 65px; height: 65px; background: white; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .logo-circle img { width: 90%; height: 90%; object-fit: contain; }
     .header h1 { margin: 0; font-size: 18px; letter-spacing: 1px; font-weight: 600; text-transform: uppercase; }
 
@@ -36,20 +38,22 @@
     .house-card { background: white; border-radius: 20px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center; border: 1px solid #f0f0f0; }
     .house-img { width: 100%; height: 230px; object-fit: cover; }
     .house-info { padding: 20px; }
-    .house-price { font-weight: bold; color: var(--primary-green); font-size: 20px; margin-bottom: 5px; display: block; }
+    .house-price { font-weight: bold; color: var(--primary-green); font-size: 22px; margin-bottom: 5px; display: block; }
     .house-name { font-weight: 600; color: #333; font-size: 18px; display: block; margin-bottom: 5px; }
-    .house-desc { font-size: 14px; color: #888; line-height: 1.4; }
+    .house-desc { font-size: 14px; color: #888; line-height: 1.4; margin: 0; }
 
     /* รูปแอดมินในหน้าติดต่อ */
     .admin-photo-container { text-align: center; margin-bottom: 20px; }
-    .admin-avatar { width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--primary-green); object-fit: cover; }
+    .admin-avatar { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--primary-green); object-fit: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
     .contact-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: #f9f9f9; border-radius: 15px; margin-bottom: 10px; text-decoration: none; color: inherit; }
     .contact-item i { font-size: 24px; color: var(--primary-green); }
+    .p-img-box { position: relative; width: 100px; height: 100px; margin: 0 auto 15px; cursor: pointer; }
+    .p-img-preview { width: 100%; height: 100%; border-radius: 50%; border: 3px solid var(--primary-green); object-fit: cover; }
   </style>
 </head>
 <body onload="initApp()">
 
-  <div id="loadingScreen"><div class="spinner"></div><p id="txtLoading">HUAHิน.PROPERTIES Loading...</p></div>
+  <div id="loadingScreen"><div class="spinner"></div><p id="txtLoading">HUAHIN.PROPERTIES Loading...</p></div>
 
   <div class="flag-bar">
     <img src="https://flagcdn.com/w80/th.png" class="flag-icon" onclick="changeLang('th')">
@@ -77,6 +81,17 @@
       <span class="link-text" onclick="switchPage('registerPage')" id="linkToReg">สมัครสมาชิกใหม่ที่นี่</span>
     </div>
 
+    <div id="registerPage" class="card" style="display:none;">
+      <h3 id="hReg">สมัครสมาชิกใหม่</h3>
+      <div class="input-group"><label id="lblRName">ชื่อ-นามสกุล</label><input type="text" id="rName"></div>
+      <div class="input-group"><label id="lblRPhone">เบอร์โทรศัพท์</label><input type="tel" id="rPhone"></div>
+      <div class="input-group"><label id="lblRLine">ไอดีไลน์</label><input type="text" id="rLine"></div>
+      <div class="input-group"><label id="lblRPass">รหัสผ่าน</label><input type="password" id="rPass" autocomplete="new-password"><i class="fa-solid fa-eye eye-toggle" id="eyeR" onclick="togglePass('rPass', 'eyeR')"></i></div>
+      <div class="input-group"><label id="lblRPassConfirm">ยืนยันรหัสผ่าน</label><input type="password" id="rPassConfirm" autocomplete="new-password"><i class="fa-solid fa-eye eye-toggle" id="eyeR2" onclick="togglePass('rPassConfirm', 'eyeR2')"></i></div>
+      <button class="submit-btn" onclick="handleRegister()" id="btnReg">Register</button>
+      <span class="link-text" onclick="switchPage('loginPage')" id="linkBack">กลับ</span>
+    </div>
+
     <div id="menuPage" style="display:none; text-align: center;">
       <div id="topStatusBadge" class="top-status">Status: ...</div>
       <p id="welcomeMsg" style="font-weight:600; font-size:18px; margin-bottom: 20px;"></p>
@@ -84,6 +99,23 @@
       <button class="menu-btn" onclick="checkActive('houselist')"><i class="fa-solid fa-house-chimney-window"></i> <span id="mHouseList">ลิสต์รายชื่อบ้าน</span></button>
       <button class="menu-btn" onclick="switchPage('contactPage')" style="background:#007bff;"><i class="fa-solid fa-headset"></i> <span id="mContactUs">ติดต่อเรา</span></button>
       <div onclick="handleLogout()" class="link-text" id="btnLogoutMenu">ออกจากระบบ</div>
+    </div>
+
+    <div id="profilePage" class="card" style="display:none;">
+      <div class="p-img-box" onclick="document.getElementById('fileInput').click()">
+        <img id="pImg" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="p-img-preview">
+        <div style="position: absolute; bottom:0; right:0; background:white; border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border:1px solid #ddd;"><i class="fa-solid fa-camera"></i></div>
+        <input type="file" id="fileInput" style="display:none" onchange="previewImg(this)" accept="image/*">
+      </div>
+      <div id="pBadge" class="top-status" style="display: block; margin: 0 auto 15px;">Status</div>
+      <div class="input-group"><label id="lblPId">รหัสสมาชิก</label><input type="text" id="pId" readonly class="locked"></div>
+      <div class="input-group"><label id="lblPName">ชื่อ-นามสกุล</label><input type="text" id="pName" readonly class="locked"></div>
+      <div class="input-group"><label id="lblPPhone">เบอร์โทรศัพท์</label><input type="text" id="pPhone" readonly class="locked"></div>
+      <div class="input-group"><label id="lblPLine">ไอดีไลน์</label><input type="text" id="pLine"></div>
+      <div class="input-group"><label id="lblPPass">Password</label><input type="password" id="pPass"><i class="fa-solid fa-eye eye-toggle" id="eyeP" onclick="togglePass('pPass', 'eyeP')"></i></div>
+      <div class="input-group"><label id="lblPNotes">บันทึกส่วนตัว</label><textarea id="pNotes" rows="3"></textarea></div>
+      <button class="submit-btn" onclick="handleUpdateProfile()" id="btnSave">บันทึกข้อมูล</button>
+      <div onclick="switchPage('menuPage')" class="link-text" id="btnBackToMenu">กลับเมนูหลัก</div>
     </div>
 
     <div id="contactPage" class="card" style="display:none;">
@@ -97,37 +129,9 @@
     </div>
 
     <div id="propertiesPage" style="display:none; padding-top: 10px;">
-      <h3 id="hPropertiesTitle">🏠 รายการทรัพย์สิน</h3>
+      <h3 id="hPropertiesTitle" style="margin-bottom: 20px;">🏠 รายการทรัพย์สิน</h3>
       <div id="propertiesList"></div>
       <div onclick="switchPage('menuPage')" class="link-text" id="btnBackToMenu2">กลับเมนูหลัก</div>
-    </div>
-
-    <div id="registerPage" class="card" style="display:none;">
-      <h3 id="hReg">สมัครสมาชิกใหม่</h3>
-      <div class="input-group"><label id="lblRName">ชื่อ-นามสกุล</label><input type="text" id="rName"></div>
-      <div class="input-group"><label id="lblRPhone">เบอร์โทรศัพท์</label><input type="tel" id="rPhone"></div>
-      <div class="input-group"><label id="lblRLine">ไอดีไลน์</label><input type="text" id="rLine"></div>
-      <div class="input-group"><label id="lblRPass">รหัสผ่าน</label><input type="password" id="rPass" autocomplete="new-password"><i class="fa-solid fa-eye eye-toggle" id="eyeR" onclick="togglePass('rPass', 'eyeR')"></i></div>
-      <div class="input-group"><label id="lblRPassConfirm">ยืนยันรหัสผ่าน</label><input type="password" id="rPassConfirm" autocomplete="new-password"><i class="fa-solid fa-eye eye-toggle" id="eyeR2" onclick="togglePass('rPassConfirm', 'eyeR2')"></i></div>
-      <button class="submit-btn" onclick="handleRegister()" id="btnReg">Register</button>
-      <span class="link-text" onclick="switchPage('loginPage')" id="linkBack">กลับ</span>
-    </div>
-
-    <div id="profilePage" class="card" style="display:none;">
-      <div class="p-img-box" onclick="document.getElementById('fileInput').click()">
-        <img id="pImg" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="p-img-preview">
-        <div class="p-img-cam" style="position: absolute; bottom:0; right:0; background:white; border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border:1px solid #ddd;"><i class="fa-solid fa-camera"></i></div>
-        <input type="file" id="fileInput" style="display:none" onchange="previewImg(this)" accept="image/*">
-      </div>
-      <div id="pBadge" class="top-status" style="display: block; margin: 0 auto 15px;">Status</div>
-      <div class="input-group"><label id="lblPId">รหัสสมาชิก</label><input type="text" id="pId" readonly class="locked"></div>
-      <div class="input-group"><label id="lblPName">ชื่อ-นามสกุล</label><input type="text" id="pName" readonly class="locked"></div>
-      <div class="input-group"><label id="lblPPhone">เบอร์โทรศัพท์</label><input type="text" id="pPhone" readonly class="locked"></div>
-      <div class="input-group"><label id="lblPLine">ไอดีไลน์</label><input type="text" id="pLine"></div>
-      <div class="input-group"><label id="lblPPass">Password</label><input type="password" id="pPass"><i class="fa-solid fa-eye eye-toggle" id="eyeP" onclick="togglePass('pPass', 'eyeP')"></i></div>
-      <div class="input-group"><label id="lblPNotes">บันทึกส่วนตัว</label><textarea id="pNotes" rows="3"></textarea></div>
-      <button class="submit-btn" onclick="handleUpdateProfile()" id="btnSave">บันทึกข้อมูล</button>
-      <div onclick="switchPage('menuPage')" class="link-text" id="btnBackToMenu">กลับเมนูหลัก</div>
     </div>
   </div>
 
@@ -148,7 +152,7 @@
     function switchPage(pageId) { 
       ['loginPage', 'registerPage', 'menuPage', 'profilePage', 'propertiesPage', 'contactPage'].forEach(id => document.getElementById(id).style.display = 'none'); 
       document.getElementById(pageId).style.display = 'block'; 
-      // จัดการการแสดงผล Header: ซ่อนถ้าเป็นหน้าลิสต์บ้าน
+      // จัดการการแสดงผล Header: ซ่อนถ้าเป็นหน้าลิสต์บ้านตามคำขอ
       document.getElementById('mainHeader').style.display = (pageId === 'propertiesPage') ? 'none' : 'block';
     }
 
@@ -183,7 +187,7 @@
       const listDiv = document.getElementById('propertiesList'); listDiv.innerHTML = ''; 
       if(properties) { 
         properties.forEach(house => { 
-          // ปรับโครงสร้าง HTML เป็นรูปแบบการ์ดให้ถูกต้องตามรูป 1, 2
+          // ปรับโครงสร้างเลย์เอาต์เป็นการ์ดเหมือนรูป 1, 2
           listDiv.innerHTML += `
             <div class="house-card">
               <img src="${house[4] || 'https://placehold.co/600x400'}" class="house-img">
