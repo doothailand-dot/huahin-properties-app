@@ -24,14 +24,16 @@
 
     .input-group { margin-bottom: 15px; text-align: left; position: relative; }
     .input-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; }
-    
-    /* สไตล์ช่องเลือกแบบ Dropdown และช่องกรอก */
     .input-group input, .input-group textarea, .input-group select { 
       width: 100%; padding: 12px; border: 1.5px solid #eee; border-radius: 12px; 
       box-sizing: border-box; font-family: 'Kanit'; font-size: 16px; background: #fafafa; outline: none;
     }
     
     .menu-btn { width: 100%; padding: 16px; background: var(--primary-green); color: white; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; font-size: 16px; }
+    
+    /* สไตล์สำหรับการ์ดประวัติงาน */
+    .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #fff; border-radius: 18px; margin-bottom: 12px; border: 1px solid #eee; }
+    .status-pill { font-size: 11px; padding: 4px 12px; border-radius: 50px; font-weight: 600; }
     .pill-Appro { background: var(--bg-Appro); color: var(--txt-Appro); }
     .pill-Pending { background: var(--bg-Pending); color: var(--txt-Pending); }
     .pill-Rejected { background: var(--bg-Rejected); color: var(--txt-Rejected); }
@@ -58,12 +60,14 @@
 
       <div id="checkinForm" class="card">
         <h3 style="margin-top:0"><i class="fa-solid fa-file-signature"></i> บันทึกพาชมบ้าน</h3>
-        
         <div class="input-group">
-          <label>รหัสบ้าน (Property ID)</label>
-          <select id="vPropId">
-            <option value="">กำลังโหลดรหัสบ้าน...</option>
-          </select>
+          <label>โครงการ / รหัสหลัก (Property ID)</label>
+          <select id="vPropId"><option value="">กำลังโหลดรหัสบ้าน...</option></select>
+        </div>
+
+        <div class="input-group">
+          <label>ยูนิต / รหัสย่อยหน้างาน <small style="color:#999; font-weight:400;">(เช่น M14, C2, 41)</small></label>
+          <input type="text" id="vSubPropId" placeholder="ระบุเลขแปลงหรือรหัสย่อยที่พาชม">
         </div>
 
         <div class="input-group"><label>ชื่อลูกค้า</label><input type="text" id="vClientName" placeholder="ระบุชื่อลูกค้า"></div>
@@ -134,13 +138,37 @@
       } else switchPage('loginPage');
     }
 
-    // ฟังก์ชันดึงรหัสบ้านมาใส่ Dropdown
     async function fetchPropertyIds() {
       const res = await fetch(`${API_URL}?action=getPropertyIds`).then(r => r.json());
       const vSelect = document.getElementById('vPropId');
       const aSelect = document.getElementById('aPropId');
       const options = `<option value="">-- เลือกพรอพเพอร์ตี้ --</option>` + res.map(id => `<option value="${id}">${id}</option>`).join('');
       vSelect.innerHTML = options; aSelect.innerHTML = options;
+    }
+
+    // ปรับหน้าประวัติให้แสดง Sub-ID ด้วย
+    async function loadHistory() {
+      const res = await fetch(`${API_URL}?action=getVisitHistory&agentId=${globalProfile.agentId}`).then(r => r.json());
+      const list = document.getElementById('historyList');
+      list.innerHTML = res.history.map(item => {
+        let stClass = "pill-Pending";
+        if(item.status.toLowerCase().includes("appro")) stClass = "pill-Appro";
+        else if(item.status.toLowerCase().includes("rejec")) stClass = "pill-Rejected";
+        
+        // แสดงรหัสโครงการตามด้วยรหัสย่อยหน้างานในวงเล็บ
+        const displayId = item.subPropertyId ? `${item.propertyId} (${item.subPropertyId})` : item.propertyId;
+
+        return `<div class="hist-item">
+          <div style="text-align:left;">
+            <b style="font-size:15px;">${displayId}</b><br>
+            <small style="color:#666;">${item.clientName}</small>
+          </div>
+          <div style="text-align:right;">
+             <div class="status-pill ${stClass}">${item.status}</div><br>
+             <small style="color:#999;">${item.date.split(' ')[0]}</small>
+          </div>
+        </div>`;
+      }).join('');
     }
 
     function showVisitPage() {
@@ -157,7 +185,7 @@
       if (status.includes('appro') || status === 'admin') {
         pill.className = "status-pill-mini pill-Appro";
         document.getElementById('checkinForm').style.display = 'block'; document.getElementById('lockMessage').style.display = 'none';
-        fetchPropertyIds(); // ดึงข้อมูล Dropdown เมื่อเข้าหน้านี้
+        fetchPropertyIds(); 
       } else {
         pill.className = "status-pill-mini pill-Pending";
         document.getElementById('checkinForm').style.display = 'none'; document.getElementById('lockMessage').style.display = 'block';
@@ -165,28 +193,19 @@
       switchPage('visitPage');
     }
 
-    async function handleLogin() {
-      const ph = document.getElementById('lPhone').value, ps = document.getElementById('lPass').value;
-      if(!ph || !ps) return Swal.fire('เตือน', 'กรุณากรอกข้อมูลให้ครบ', 'warning');
+    async function handleRecordVisit() {
+      const data = { 
+        action: "recordVisit", agentId: globalProfile.agentId, agentName: globalProfile.name, agentPhone: globalProfile.phone, 
+        propertyId: document.getElementById('vPropId').value, 
+        subPropertyId: document.getElementById('vSubPropId').value, // ส่งค่ารหัสย่อย
+        clientName: document.getElementById('vClientName').value, 
+        notes: document.getElementById('vNotes').value, image1: img1Base64, image2: img2Base64, locationLink: locationLink 
+      };
+      if (!data.propertyId || !data.clientName) return Swal.fire('เตือน', 'กรุณากรอกข้อมูลสำคัญ', 'warning');
       Swal.showLoading();
-      const res = await fetch(`${API_URL}?action=login&phone=${ph}&password=${ps}`).then(r => r.json());
+      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(data) }).then(r => r.json());
       Swal.close();
-      if (res?.success) { localStorage.setItem('agent_phone', ph); localStorage.setItem('agent_pass', ps); globalProfile = res.profile; showVisitPage(); }
-      else Swal.fire('Error', 'ไม่ถูกต้อง', 'error');
-    }
-
-    async function loadHistory() {
-      const res = await fetch(`${API_URL}?action=getVisitHistory&agentId=${globalProfile.agentId}`).then(r => r.json());
-      const list = document.getElementById('historyList');
-      list.innerHTML = res.history.map(item => {
-        let stClass = "pill-Pending";
-        if(item.status.toLowerCase().includes("appro")) stClass = "pill-Appro";
-        else if(item.status.toLowerCase().includes("rejec")) stClass = "pill-Rejected";
-        return `<div style="display:flex; justify-content:space-between; padding:15px; background:#fff; border-radius:15px; margin-bottom:10px; border:1px solid #eee;">
-          <div><b>${item.propertyId}</b><br><small>${item.clientName}</small></div>
-          <div style="text-align:right;"><div class="status-pill-mini ${stClass}">${item.status}</div><br><small style="color:#999;">${item.date.split(' ')[0]}</small></div>
-        </div>`;
-      }).join('');
+      if (res.success) Swal.fire('สำเร็จ', 'บันทึกเรียบร้อย', 'success').then(() => location.reload());
     }
 
     function switchPage(id) {
@@ -202,19 +221,20 @@
 
     function togglePass(id, eyeId) {
       const x = document.getElementById(id), icon = document.getElementById(eyeId);
-      if (x.type === "password") { x.type = "text"; icon.className = "fa-solid fa-eye-slash eye-btn"; } 
-      else { x.type = "password"; icon.className = "fa-solid fa-eye eye-btn"; }
+      x.type = (x.type === "password") ? "text" : "password";
+      icon.className = (x.type === "password") ? "fa-solid fa-eye eye-btn" : "fa-solid fa-eye-slash eye-btn";
+    }
+    async function handleLogin() {
+      const ph = document.getElementById('lPhone').value, ps = document.getElementById('lPass').value;
+      if(!ph || !ps) return Swal.fire('เตือน', 'กรุณากรอกข้อมูล', 'warning');
+      Swal.showLoading();
+      const res = await fetch(`${API_URL}?action=login&phone=${ph}&password=${ps}`).then(r => r.json());
+      Swal.close();
+      if (res?.success) { localStorage.setItem('agent_phone', ph); localStorage.setItem('agent_pass', ps); globalProfile = res.profile; showVisitPage(); }
+      else Swal.fire('Error', 'เบอร์หรือรหัสผ่านผิด', 'error');
     }
     function previewImg(input, id) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = (e) => { document.getElementById(id).src = e.target.result; if (id === 'vImg1') img1Base64 = e.target.result; else img2Base64 = e.target.result; }; reader.readAsDataURL(input.files[0]); } }
     function getLocation() { if (navigator.geolocation) { navigator.geolocation.getCurrentPosition((pos) => { locationLink = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`; Swal.fire('สำเร็จ', 'พิกัดพร้อมส่ง', 'success'); }); } }
-    async function handleRecordVisit() {
-      const data = { action: "recordVisit", agentId: globalProfile.agentId, agentName: globalProfile.name, agentPhone: globalProfile.phone, propertyId: document.getElementById('vPropId').value, clientName: document.getElementById('vClientName').value, notes: document.getElementById('vNotes').value, image1: img1Base64, image2: img2Base64, locationLink: locationLink };
-      if (!data.propertyId || !data.clientName) return Swal.fire('เตือน', 'กรุณากรอกข้อมูลสำคัญ', 'warning');
-      Swal.showLoading();
-      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(data) }).then(r => r.json());
-      Swal.close();
-      if (res.success) Swal.fire('สำเร็จ', 'บันทึกเรียบร้อย', 'success').then(() => location.reload());
-    }
     function handleLogout() { localStorage.clear(); location.reload(); }
     async function openProperties(cat) { switchPage('propertiesPage'); if(allHouses.length === 0) { Swal.showLoading(); allHouses = await fetch(`${API_URL}?action=getProperties&role=${globalProfile?.role || 'customer'}&lang=th`).then(r => r.json()); Swal.close(); } renderList(cat); }
     function renderList(cat) { const list = document.getElementById('propertiesList'); list.innerHTML = ''; allHouses.filter(h => cat === 'home' || h[cat] === "Y").forEach(h => { list.innerHTML += `<div class="house-card" style="display:flex; background:#fff; margin-bottom:10px; border-radius:12px; padding:10px;"><img src="${h.img || 'https://placehold.co/100'}" style="width:70px;height:70px;border-radius:8px;object-fit:cover;"><div style="padding-left:10px;"><b>${h.title}</b><br><span style="color:red">฿ ${h.price}</span><br><small>ID: ${h.id}</small></div></div>`; }); }
