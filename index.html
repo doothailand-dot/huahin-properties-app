@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
-    :root { --primary-green: #24d366; --bg-sale: #e8f5e9; --txt-sale: #2e7d32; --bg-rent: #ffebee; --txt-rent: #c62828; --bg-both: #e3f2fd; --txt-both: #1565c0; --bg-Available: #e8f5e9; --txt-Available: #2e7d32; }
+    :root { --primary-green: #24d366; --bg-sale: #e8f5e9; --txt-sale: #2e7d32; --bg-rent: #ffebee; --txt-rent: #c62828; --bg-both: #e3f2fd; --txt-both: #1565c0; }
     body { font-family: 'Kanit', sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; font-weight: 300; }
     .header-filter { background-color: var(--primary-green); padding: 8px 10px 10px; border-radius: 0 0 15px 15px; position: sticky; top: 0; z-index: 1100; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
     .search-row { display: flex; gap: 5px; margin-bottom: 5px; }
@@ -16,6 +16,7 @@
     .filter-select { flex: 1; border: none; border-radius: 8px; font-size: 11px; padding: 0 5px; height: 32px; outline: none; background: rgba(255,255,255,0.95); }
     .container { padding: 6px; max-width: 450px; margin: 0 auto 75px; }
     .card { background: white; padding: 12px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 8px; }
+    /* สไตล์แสดงผล 3 แถว */
     .compact-item { display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; background: #fff; border-bottom: 1px solid #f0f0f0; }
     .compact-thumb { width: 45px; height: 45px; border-radius: 6px; object-fit: cover; margin-right: 10px; border: 1px solid #eee; }
     .compact-info b { font-size: 12px; color: #333; display: block; font-weight: 400; line-height: 1.1; }
@@ -27,9 +28,6 @@
     .nav-item { flex: 1; padding: 6px 0; text-align: center; font-size: 9px; color: #999; cursor: pointer; }
     .nav-item.active { color: var(--primary-green); font-weight: 400; }
     .nav-item i { font-size: 16px; margin-bottom: 1px; display: block; }
-    .input-group { margin-bottom: 6px; text-align: left; }
-    .input-group label { display: block; margin-bottom: 2px; font-weight: 400; font-size: 11px; }
-    .input-group input, .input-group textarea { width: 100%; padding: 8px; border: 1.2px solid #eee; border-radius: 8px; box-sizing: border-box; font-family: 'Kanit'; font-size: 14px; background: #fafafa; outline: none; }
     .menu-btn { width: 100%; padding: 12px; background: var(--primary-green); color: white; border: none; border-radius: 50px; font-weight: 400; cursor: pointer; margin-top: 10px; }
     .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
     .modal-content { background: #fff; margin: 15% auto; padding: 12px; width: 85%; border-radius: 15px; max-height: 60vh; overflow-y: auto; }
@@ -41,7 +39,7 @@
 
   <div id="filterHeader" class="header-filter" style="display:none;">
     <div class="search-row"><input type="text" id="searchId" class="search-input" placeholder="🔍 ค้นหารหัสทรัพย์..." oninput="applyFilters()"><button class="all-btn" onclick="clearFilters()">All</button><select id="filterFor" class="filter-select" onchange="applyFilters()"><option value="All">การขาย</option><option value="sale">Sale</option><option value="rent">Rent</option></select></div>
-    <div class="filter-grid"><select id="filterLoc" class="filter-select" onchange="applyFilters()"><option value="All">ทุกอำเภอ</option><option value="Hua Hin">หัวหิน</option><option value="Chaam">ชะอำ</option><option value="Pranburi">ปราณบุรี</option></select><select id="filterBed" class="filter-select" onchange="applyFilters()"><option value="All">ห้องนอน</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+    <div class="filter-grid"><select id="filterLoc" class="filter-select" onchange="applyFilters()"><option value="All">ทุกอำเภอ</option><option value="Hua Hin">หัวหิน</option><option value="Chaam">ชะอำ</option><option value="Pranburi">ปราณบุรี</option></select><select id="filterBed" class="filter-select" onchange="applyFilters()"><option value="All">ห้องนอน</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4+</option></select></div>
   </div>
 
   <div class="container">
@@ -51,7 +49,7 @@
       <h3 style="margin:0 0 10px; font-size:14px; font-weight:400;"><i class="fa-solid fa-calendar-check"></i> นัดดูบ้าน</h3>
       <div style="border:1.2px solid #eee; padding:8px; border-radius:8px; cursor:pointer;" onclick="openPropPicker('aProp')"><span id="aPropText">-- เลือกบ้าน --</span></div>
       <input type="hidden" id="aPropId">
-      <div class="input-group" style="margin-top:8px;"><label>ชื่อลูกค้า</label><input type="text" id="aClientName"></div>
+      <div class="input-group" style="margin-top:10px;"><label>ชื่อลูกค้า</label><input type="text" id="aClientName"></div>
       <div class="input-group"><label>วัน-เวลา</label><input type="datetime-local" id="aDate"></div>
       <div class="input-group"><label>บันทึก (Note)</label><textarea id="aNotes" rows="1"></textarea></div>
       <button class="menu-btn" onclick="handleAddAppoint()">บันทึกนัดหมาย</button>
@@ -61,8 +59,7 @@
       <h3 style="margin:0 0 10px; font-size:14px; font-weight:400;"><i class="fa-solid fa-file-signature"></i> เช็คอินพาชมบ้าน</h3>
       <div style="border:1.2px solid #eee; padding:8px; border-radius:8px; cursor:pointer;" onclick="openPropPicker('vProp')"><span id="vPropText">-- เลือกบ้าน --</span></div>
       <input type="hidden" id="vPropId">
-      <div class="input-group" style="margin-top:8px;"><label>ชื่อลูกค้า</label><input type="text" id="vClientName"></div>
-      <div class="input-group"><label>บันทึก (Note)</label><textarea id="vNotes" rows="1"></textarea></div>
+      <div class="input-group" style="margin-top:10px;"><label>ชื่อลูกค้า</label><input type="text" id="vClientName"></div>
       <button class="menu-btn" onclick="handleRecordVisit()">ส่งข้อมูลเช็คอิน</button>
     </div>
 
@@ -81,8 +78,8 @@
   <div id="bottomNav" class="bottom-nav" style="display:none;"><div class="nav-item" id="btnStock" onclick="openProperties()"><i class="fa-solid fa-house"></i><div>สต็อก</div></div><div class="nav-item" id="btnAppoint" onclick="switchPage('appointPage')"><i class="fa-solid fa-calendar-check"></i><div>นัดหมาย</div></div><div class="nav-item active" id="btnCheckin" onclick="showVisitPage()"><i class="fa-solid fa-file-signature"></i><div>เช็คอิน</div></div><div class="nav-item" id="btnLogout" onclick="handleLogout()"><i class="fa-solid fa-sign-out-alt"></i><div>ออก</div></div></div>
 
   <script>
-    // ฝังลิงก์ API ล่าสุดของคุณที่นี่
-    const API_URL = "https://script.google.com/macros/s/AKfycbw6SKLl9uPFhtp5sb3pTPDgKaIOgFpDG1_XBVEhl1pHqTHdgJghkdWvZ_IweWKUghXpLQ/exec"; 
+    // ฝังลิงก์ Web App ล่าสุดของคุณเจษฎ์
+    const API_URL = "https://script.google.com/macros/s/AKfycbzOS-vzrfLNoMKGZNhMe1OuDFcvRUdAMYRKG9VFUS1kKG7HoXKckmau8X09AetriyFOUw/exec"; 
     let globalProfile = null, allHouses = [], currentTarget = '';
 
     async function initApp() {
@@ -116,25 +113,8 @@
     }
 
     async function openProperties() { switchPage('propertiesPage'); if(allHouses.length === 0) { document.getElementById('propertiesList').innerHTML = '<div style="text-align:center; padding:15px; font-size:10px;">โหลดสต็อก...</div>'; const res = await fetch(`${API_URL}?action=getProperties`).then(r => r.json()); allHouses = res.data; } applyFilters(); }
-    
-    async function handleAddAppoint() {
-      const d = { action: "addAppoint", agentId: globalProfile.agentId, agentName: globalProfile.name, propertyId: document.getElementById('aPropId').value, clientName: document.getElementById('aClientName').value, date: document.getElementById('aDate').value, notes: document.getElementById('aNotes').value };
-      if(!d.propertyId || !d.date) return Swal.fire('เตือน', 'ข้อมูลไม่ครบ', 'warning');
-      Swal.showLoading();
-      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(d) }).then(r => r.json());
-      Swal.close();
-      if(res.success) Swal.fire('สำเร็จ', 'นัดหมายแล้ว', 'success').then(() => openProperties());
-    }
-
-    async function handleRecordVisit() {
-      const d = { action: "recordVisit", agentId: globalProfile.agentId, agentName: globalProfile.name, propertyId: document.getElementById('vPropId').value, clientName: document.getElementById('vClientName').value, notes: document.getElementById('vNotes').value };
-      if(!d.propertyId || !d.clientName) return Swal.fire('เตือน', 'ระบุข้อมูล', 'warning');
-      Swal.showLoading();
-      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(d) }).then(r => r.json());
-      Swal.close();
-      if(res.success) Swal.fire('สำเร็จ', 'เช็คอินแล้ว', 'success').then(() => openProperties());
-    }
-
+    async function handleAddAppoint() { const d = { action: "addAppoint", agentId: globalProfile.agentId, agentName: globalProfile.name, propertyId: document.getElementById('aPropId').value, clientName: document.getElementById('aClientName').value, date: document.getElementById('aDate').value, notes: document.getElementById('aNotes').value }; if(!d.propertyId || !d.date) return Swal.fire('เตือน', 'ข้อมูลไม่ครบ', 'warning'); Swal.showLoading(); const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(d) }).then(r => r.json()); Swal.close(); if(res.success) Swal.fire('สำเร็จ', 'นัดหมายแล้ว', 'success').then(() => openProperties()); }
+    async function handleRecordVisit() { const d = { action: "recordVisit", agentId: globalProfile.agentId, agentName: globalProfile.name, propertyId: document.getElementById('vPropId').value, clientName: document.getElementById('vClientName').value, notes: "" }; if(!d.propertyId || !d.clientName) return Swal.fire('เตือน', 'ระบุข้อมูล', 'warning'); Swal.showLoading(); const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(d) }).then(r => r.json()); Swal.close(); if(res.success) Swal.fire('สำเร็จ', 'เช็คอินแล้ว', 'success').then(() => openProperties()); }
     function switchPage(id) { ['loginPage', 'propertiesPage', 'appointPage', 'visitPage'].forEach(p => { const el = document.getElementById(p); if(el) el.style.display = 'none'; }); const t = document.getElementById(id); if(t) t.style.display = 'block'; document.getElementById('filterHeader').style.display = (id === 'propertiesPage') ? 'block' : 'none'; document.getElementById('bottomNav').style.display = (id === 'loginPage') ? 'none' : 'flex'; document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); if(id === 'propertiesPage') document.getElementById('btnStock').classList.add('active'); else if(id === 'appointPage') document.getElementById('btnAppoint').classList.add('active'); else if(id === 'visitPage') document.getElementById('btnCheckin').classList.add('active'); }
     async function handleLogin() { const ph = document.getElementById('lPhone').value, ps = document.getElementById('lPass').value; Swal.showLoading(); const res = await fetch(`${API_URL}?action=login&phone=${ph}&password=${ps}`).then(r => r.json()); Swal.close(); if (res?.success) { localStorage.setItem('agent_phone', ph); localStorage.setItem('agent_pass', ps); globalProfile = res.profile; openProperties(); } else Swal.fire('Error', 'เบอร์หรือรหัสผ่านไม่ถูกต้อง', 'error'); }
     function openPropPicker(t) { currentTarget = t; if(allHouses.length === 0) { fetch(`${API_URL}?action=getProperties`).then(r => r.json()).then(res => { allHouses = res.data; showPicker(); }); } else showPicker(); }
