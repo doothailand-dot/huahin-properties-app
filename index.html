@@ -18,7 +18,6 @@
     .input-group label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 13px; }
     .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 12px; border: 1.5px solid #eee; border-radius: 12px; box-sizing: border-box; font-family: 'Kanit'; font-size: 15px; background: #fafafa; outline: none; }
     
-    /* ระบบเลือก Property */
     .prop-picker-btn { width: 100%; padding: 12px; border: 1.5px solid #eee; border-radius: 12px; background: #fff; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
     .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
     .modal-content { background: #fff; margin: 15% auto; padding: 15px; width: 85%; border-radius: 20px; max-height: 70vh; overflow-y: auto; }
@@ -26,25 +25,23 @@
     .prop-item img { width: 35px; height: 35px; border-radius: 6px; object-fit: cover; margin-right: 12px; }
 
     .menu-btn { width: 100%; padding: 14px; background: var(--primary-green); color: white; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; font-size: 15px; }
-    
-    /* Bottom Nav ระบบเปลี่ยนสีไอคอนอัตโนมัติ */
     .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; border-top: 1px solid #eee; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
     .nav-item { flex: 1; padding: 8px 0; text-align: center; font-size: 9px; color: #999; cursor: pointer; }
     .nav-item.active { color: var(--primary-green); font-weight: 600; }
     .nav-item i { font-size: 18px; margin-bottom: 2px; display: block; }
     
-    /* รายการประวัติแบบ Compact */
-    .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #fff; border-bottom: 1px solid #f2f2f2; }
-    .hist-thumb { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; margin-right: 10px; }
-    .status-pill { font-size: 9px; padding: 1px 6px; border-radius: 50px; font-weight: 600; }
+    /* สไตล์รายการแบบกะทัดรัด (ใช้ร่วมกันทั้งประวัติและสต็อก) */
+    .compact-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #fff; border-bottom: 1px solid #f2f2f2; }
+    .compact-thumb { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; margin-right: 10px; border: 1px solid #eee; }
+    .compact-info b { font-size: 12px; color: #333; display: block; }
+    .compact-info small { font-size: 11px; color: #666; }
+    .compact-right { text-align: right; }
+
+    .status-pill { font-size: 9px; padding: 1px 6px; border-radius: 50px; font-weight: 600; display: inline-block; }
     .pill-Appro { background: var(--bg-Appro); color: var(--txt-Appro); }
     .pill-Pending { background: var(--bg-Pending); color: var(--txt-Pending); }
     .pill-Rejected { background: var(--bg-Rejected); color: var(--txt-Rejected); }
     .img-preview { width: 70px; height: 70px; border-radius: 10px; border: 2px dashed #ccc; object-fit: cover; cursor: pointer; }
-
-    /* สไตล์รายการสต็อกบ้าน */
-    .stock-item { display: flex; background: #fff; border-radius: 15px; padding: 10px; margin-bottom: 10px; border: 1px solid #eee; align-items: center; }
-    .stock-thumb { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; margin-right: 12px; }
   </style>
 </head>
 <body onload="initApp()">
@@ -52,15 +49,7 @@
   <div class="header"><h1>HUAHIN.PROPERTIES</h1></div>
 
   <div class="container">
-    <div id="loginPage" class="card" style="display:none; text-align:center;">
-      <img src="https://img5.pic.in.th/file/secure-sv1/222892.jpg" class="login-logo">
-      <h3 style="margin-top:0; font-size: 18px;">Agent Login</h3>
-      <div class="input-group"><label>เบอร์โทรศัพท์</label><input type="tel" id="lPhone" placeholder="08x-xxxxxxx"></div>
-      <div class="input-group"><label>รหัสผ่าน</label><input type="password" id="lPass" placeholder="******"></div>
-      <button class="menu-btn" onclick="handleLogin()">Login</button>
-      <div style="margin-top:15px; font-size:14px;">ยังไม่มีบัญชี? <span onclick="switchPage('registerPage')" style="color:var(--primary-green); font-weight:600; cursor:pointer;">สมัครสมาชิก</span></div>
-    </div>
-
+    <div id="loginPage" class="card" style="display:none; text-align:center;"><img src="https://img5.pic.in.th/file/secure-sv1/222892.jpg" class="login-logo"><h3 style="margin-top:0; font-size: 18px;">Agent Login</h3><div class="input-group"><label>เบอร์โทรศัพท์</label><input type="tel" id="lPhone" placeholder="08x-xxxxxxx"></div><div class="input-group"><label>รหัสผ่าน</label><input type="password" id="lPass" placeholder="******"></div><button class="menu-btn" onclick="handleLogin()">Login</button><div style="margin-top:15px; font-size:14px;">ยังไม่มีบัญชี? <span onclick="switchPage('registerPage')" style="color:var(--primary-green); font-weight:600; cursor:pointer;">สมัครสมาชิก</span></div></div>
     <div id="registerPage" class="card" style="display:none;"><h3 style="margin-top:0;">ลงทะเบียนเอเจนต์</h3><div class="input-group"><label>ชื่อ-นามสกุล</label><input type="text" id="rName"></div><div class="input-group"><label>เบอร์โทรศัพท์</label><input type="tel" id="rPhone"></div><div class="input-group"><label>รหัสผ่าน</label><input type="password" id="rPass" placeholder="******"></div><button class="menu-btn" onclick="handleRegister()">ลงทะเบียน</button><div onclick="switchPage('loginPage')" style="text-align:center; font-size:14px; margin-top:10px; cursor:pointer;">มีบัญชีแล้ว? เข้าสู่ระบบ</div></div>
 
     <div id="visitPage" style="display:none;">
@@ -68,7 +57,7 @@
       <div id="checkinForm" class="card">
         <h3 style="margin-top:0; font-size: 16px;"><i class="fa-solid fa-file-signature"></i> บันทึกพาชมบ้าน</h3>
         <div class="input-group"><label>Property ID (โครงการหลัก)</label><div class="prop-picker-btn" onclick="openPropPicker('vProp')"><div id="vPropDisplay" style="display:flex; align-items:center;"><img id="vPropImg" src="" style="width:25px; height:25px; border-radius:4px; margin-right:8px; display:none;"><span id="vPropText">-- เลือกรายการ --</span></div><i class="fa-solid fa-chevron-down" style="font-size:12px; color:#999;"></i></div><input type="hidden" id="vPropId"></div>
-        <div class="input-group"><label>ยูนิต / หลังอื่นๆ</label><input type="text" id="vSubPropId" placeholder="เช่น HH0001,M14,HH0005,M12"></div>
+        <div class="input-group"><label>ยูนิต / หลังอื่นๆ</label><input type="text" id="vSubPropId" placeholder="เช่น HH0001,M14..."></div>
         <div class="input-group"><label>ชื่อลูกค้า</label><input type="text" id="vClientName"></div>
         <div class="input-group"><label>แนบรูปถ่าย (2 รูป)</label><div style="display:flex; gap:10px; justify-content:center;"><img id="vImg1" src="https://placehold.co/70?text=1" class="img-preview" onclick="document.getElementById('file1').click()"><img id="vImg2" src="https://placehold.co/70?text=2" class="img-preview" onclick="document.getElementById('file2').click()"><input type="file" id="file1" style="display:none" onchange="previewImg(this, 'vImg1')"><input type="file" id="file2" style="display:none" onchange="previewImg(this, 'vImg2')"></div></div>
         <div class="input-group"><label>บันทึก/หมายเหตุ (Note)</label><textarea id="vNotes" rows="2"></textarea></div>
@@ -80,7 +69,7 @@
     </div>
 
     <div id="appointPage" class="card" style="display:none;">
-      <h3 style="margin-top:0; font-size: 18px;"><i class="fa-solid fa-calendar-check"></i> นัดหมายลูกค้า</h3>
+      <h3 style="margin-top:0; font-size: 18px;"><i class="fa-solid fa-calendar-check"></i> นัดดูบ้าน</h3>
       <div class="input-group"><label>Property ID (โครงการหลัก)</label><div class="prop-picker-btn" onclick="openPropPicker('aProp')"><div id="aPropDisplay" style="display:flex; align-items:center;"><img id="aPropImg" src="" style="width:25px; height:25px; border-radius:4px; margin-right:8px; display:none;"><span id="aPropText">-- เลือกรายการ --</span></div><i class="fa-solid fa-chevron-down" style="font-size:12px; color:#999;"></i></div><input type="hidden" id="aPropId"></div>
       <div class="input-group"><label>ยูนิต / หลังอื่นๆ</label><input type="text" id="aSubPropId" placeholder="เช่น HH0001,M14..."></div>
       <div class="input-group"><label>ชื่อลูกค้า</label><input type="text" id="aClientName"></div>
@@ -89,13 +78,13 @@
       <button class="menu-btn" onclick="handleAddAppoint()">บันทึกนัดหมาย</button>
     </div>
 
-    <div id="propertiesPage" style="display:none;">
-      <h3 style="margin-left:5px; font-size: 18px;">🏠 รายการพรอพเพอร์ตี้</h3>
+    <div id="propertiesPage" style="display:none; background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+      <div style="padding: 12px; border-bottom: 1.5px solid #f4f4f4;"><b style="font-size: 14px;">🏠 รายการพรอพเพอร์ตี้ (Stock)</b></div>
       <div id="propertiesList"></div>
     </div>
 
-    <div id="historyPage" style="display:none; background: #fff; border-radius: 20px; overflow: hidden;">
-      <div style="padding: 12px; border-bottom: 1.5px solid #f4f4f4; display: flex; justify-content: space-between;"><b>ประวัติการพาชม</b><i class="fa-solid fa-rotate" onclick="loadHistory()" style="color:#999;"></i></div>
+    <div id="historyPage" style="display:none; background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+      <div style="padding: 12px; border-bottom: 1.5px solid #f4f4f4; display: flex; justify-content: space-between;"><b>ประวัติการพาชม</b><i class="fa-solid fa-rotate" onclick="loadHistory()" style="color:#999; cursor:pointer;"></i></div>
       <div id="historyList"></div><div style="padding: 12px;"><button class="menu-btn" onclick="switchPage('visitPage')">กลับ</button></div>
     </div>
 
@@ -105,13 +94,13 @@
   <div id="bottomNav" class="bottom-nav" style="display:none;">
     <div class="nav-item" id="btnStock" onclick="openProperties()"><i class="fa-solid fa-house"></i><div>สต็อก</div></div>
     <div class="nav-item" id="btnAppoint" onclick="switchPage('appointPage')"><i class="fa-solid fa-calendar-check"></i><div>นัดหมาย</div></div>
-    <div class="nav-item" id="btnCheckin" onclick="showVisitPage()"><i class="fa-solid fa-file-signature"></i><div>เช็คอิน</div></div>
+    <div class="nav-item active" id="btnCheckin" onclick="showVisitPage()"><i class="fa-solid fa-file-signature"></i><div>เช็คอิน</div></div>
     <div class="nav-item" id="btnLogout" onclick="handleLogout()"><i class="fa-solid fa-sign-out-alt"></i><div>ออก</div></div>
   </div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyLB6o3Nqm8QtYSkneLHDva0T8hxkLHVl5iu1EM2IrswK8uyPkGQ4VlvP77nXHIBMB7KA/exec"; 
-    let globalProfile = null, img1Base64 = "", img2Base64 = "", locationLink = "", propertyList = [], currentTarget = '';
+    let globalProfile = null, img1Base64 = "", img2Base64 = "", locationLink = "", propertyList = [], currentTarget = '', allHouses = [];
 
     async function initApp() {
       const ph = localStorage.getItem('agent_phone'), ps = localStorage.getItem('agent_pass');
@@ -122,36 +111,37 @@
       } else switchPage('loginPage');
     }
 
-    // แก้ไขปัญหาการเปลี่ยนหน้าและสีไอคอน
     function switchPage(id) {
       ['loginPage', 'registerPage', 'visitPage', 'historyPage', 'propertiesPage', 'appointPage'].forEach(p => { if(document.getElementById(p)) document.getElementById(p).style.display = 'none'; });
       document.getElementById(id).style.display = 'block';
       document.getElementById('bottomNav').style.display = (id === 'loginPage' || id === 'registerPage') ? 'none' : 'flex';
-      
-      // ล้างสีเขียวจากไอคอนทั้งหมด
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      
-      // เติมสีเขียวให้เฉพาะหน้าที่กำลังเปิดอยู่
       if(id === 'propertiesPage') document.getElementById('btnStock').classList.add('active');
       else if(id === 'appointPage') document.getElementById('btnAppoint').classList.add('active');
       else if(id === 'visitPage' || id === 'historyPage') document.getElementById('btnCheckin').classList.add('active');
     }
 
-    // ฟังก์ชันดึงรูปและแสดงหน้าสต็อก
+    // ฟังก์ชันแสดงหน้าสต็อกแบบ Compact List
     async function openProperties() {
       switchPage('propertiesPage');
       const list = document.getElementById('propertiesList');
-      list.innerHTML = '<div style="text-align:center; padding:20px;">กำลังโหลดสต็อก...</div>';
-      const res = await fetch(`${API_URL}?action=getProperties`).then(r => r.json());
-      list.innerHTML = res.data.map(h => `
-        <div class="stock-item">
-          <img class="stock-thumb" src="${h.img || 'https://placehold.co/100'}">
-          <div style="flex:1;">
-            <b style="font-size:15px; color:#333;">${h.id}</b><br>
-            <small style="color:#666;">${h.title}</small><br>
-            <span style="color:red; font-weight:600;">฿ ${h.price}</span>
+      if(allHouses.length === 0) {
+          list.innerHTML = '<div style="text-align:center; padding:20px; font-size:12px;">กำลังโหลดสต็อก...</div>';
+          const res = await fetch(`${API_URL}?action=getProperties`).then(r => r.json());
+          allHouses = res.data;
+      }
+      list.innerHTML = allHouses.map(h => `
+        <div class="compact-item">
+          <div style="display:flex; align-items:center;">
+            <img class="compact-thumb" src="${h.img || 'https://placehold.co/100?text=No+Img'}">
+            <div class="compact-info">
+              <b>${h.id}</b>
+              <small>${h.title.substring(0, 30)}${h.title.length>30?'...':''}</small>
+            </div>
           </div>
-          <div class="status-pill pill-Appro" style="font-size:9px;">${h.status}</div>
+          <div class="compact-right">
+            <span style="color:#c62828; font-weight:600; font-size:13px;">฿ ${Number(h.price).toLocaleString()}</span>
+          </div>
         </div>`).join('');
     }
 
@@ -159,12 +149,9 @@
       const res = await fetch(`${API_URL}?action=getPropertyListData`).then(r => r.json());
       propertyList = res.data;
     }
-
     function openPropPicker(target) {
         currentTarget = target;
-        if(propertyList.length === 0) {
-            fetchPropertyIds().then(() => showPicker());
-        } else { showPicker(); }
+        if(propertyList.length === 0) { fetchPropertyIds().then(() => showPicker()); } else { showPicker(); }
     }
     function showPicker() {
         const list = document.getElementById('propPickerList');
@@ -204,7 +191,7 @@
       const list = document.getElementById('historyList');
       list.innerHTML = res.history.map(item => {
         let stClass = item.status.toLowerCase().includes("appro") ? "pill-Appro" : (item.status.toLowerCase().includes("rejec") ? "pill-Rejected" : "pill-Pending");
-        return `<div class="hist-item"><div style="display:flex; align-items:center;"><img style="width:40px;height:40px;border-radius:6px;object-fit:cover;margin-right:10px" src="${item.propImg}"><div><b style="font-size:12px;">${item.propertyId} ${item.subPropertyId?'('+item.subPropertyId+')':''}</b><br><small style="font-size:11px; color:#666;">ลูกค้า: ${item.clientName}</small></div></div><div style="text-align:right;"><div class="status-pill ${stClass}">${item.status}</div><br><small style="font-size:9px; color:#bbb;">${item.date.split(' ')[0]}</small></div></div>`;
+        return `<div class="compact-item"><div style="display:flex; align-items:center;"><img class="compact-thumb" src="${item.propImg}"><div class="compact-info"><b>${item.propertyId} ${item.subPropertyId?'('+item.subPropertyId+')':''}</b><small>ลูกค้า: ${item.clientName}</small></div></div><div class="compact-right"><div class="status-pill ${stClass}">${item.status}</div><br><small style="font-size:9px; color:#bbb;">${item.date.split(' ')[0]}</small></div></div>`;
       }).join('');
     }
 
