@@ -8,39 +8,30 @@
   <style>
     :root { --primary-green: #24d366; --bg-Appro: #e8f5e9; --txt-Appro: #2e7d32; --bg-Pending: #fff3e0; --txt-Pending: #e65100; --bg-Rejected: #ffebee; --txt-Rejected: #c62828; }
     body { font-family: 'Kanit', sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
-    
-    /* แก้ไขขนาด Header ให้เล็กลง */
     .header { background-color: var(--primary-green); color: white; padding: 15px 15px 30px; text-align: center; border-radius: 0 0 25px 25px; }
-    .header h1 { font-size: 15px; margin: 0; letter-spacing: 1px; } /* ลดจาก 18px */
-
+    .header h1 { font-size: 15px; margin: 0; letter-spacing: 1px; }
     .container { padding: 12px; max-width: 450px; margin: 0 auto 80px; }
     .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 15px; }
-    
+    .input-group { margin-bottom: 12px; text-align: left; position: relative; }
+    .input-group label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 13px; }
+    .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 12px; border: 1.5px solid #eee; border-radius: 12px; box-sizing: border-box; font-family: 'Kanit'; font-size: 15px; background: #fafafa; outline: none; }
+    .menu-btn { width: 100%; padding: 15px; background: var(--primary-green); color: white; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; font-size: 15px; }
     .agent-status-card { display: flex; align-items: center; gap: 10px; background: #fff; padding: 12px; border-radius: 15px; border: 1px solid #eee; margin-bottom: 15px; }
-    .agent-img-big { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--primary-green); }
-    .status-pill-mini { font-size: 9px; padding: 2px 8px; border-radius: 50px; font-weight: 600; margin-left: 5px; vertical-align: middle; }
-
-    .input-group { margin-bottom: 12px; text-align: left; }
-    .input-group label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 12px; }
-    .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 10px; border: 1.5px solid #eee; border-radius: 12px; box-sizing: border-box; font-family: 'Kanit'; font-size: 14px; background: #fafafa; outline: none; }
-    .menu-btn { width: 100%; padding: 14px; background: var(--primary-green); color: white; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; font-size: 14px; }
-
-    /* รายการประวัติแบบกะทัดรัด (2 แถว) */
+    .agent-img-big { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-green); }
+    
+    /* สไตล์รายการประวัติแบบ Compact */
     .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #fff; border-bottom: 1px solid #f2f2f2; }
     .hist-main { display: flex; align-items: center; gap: 10px; }
     .hist-thumb { width: 42px; height: 42px; border-radius: 6px; object-fit: cover; border: 1px solid #eee; }
-    
-    .hist-info b { font-size: 12px; color: #333; display: block; } /* รหัสบ้านขนาดเล็กเท่าชื่อลูกค้า แต่เป็นตัวหนา */
-    .hist-info small { font-size: 12px; color: #666; } /* ชื่อลูกค้าขนาด 12px */
-    
+    .hist-info b { font-size: 12px; color: #333; display: block; }
+    .hist-info small { font-size: 12px; color: #666; }
     .hist-status { text-align: right; }
-    .status-pill { font-size: 9px; padding: 1px 6px; border-radius: 50px; font-weight: 600; display: inline-block; margin-bottom: 2px; } /* ป้ายสถานะเล็กลง */
+    .status-pill { font-size: 9px; padding: 1px 6px; border-radius: 50px; font-weight: 600; display: inline-block; margin-bottom: 2px; }
     .pill-Appro { background: var(--bg-Appro); color: var(--txt-Appro); }
     .pill-Pending { background: var(--bg-Pending); color: var(--txt-Pending); }
     .pill-Rejected { background: var(--bg-Rejected); color: var(--txt-Rejected); }
-    .hist-status small { font-size: 9px; color: #bbb; display: block; }
-
-    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; border-top: 1px solid #eee; z-index: 1000; }
+    
+    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; border-top: 1px solid #eee; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
     .nav-item { flex: 1; padding: 8px 0; text-align: center; font-size: 9px; color: #999; cursor: pointer; }
     .nav-item.active { color: var(--primary-green); }
     .img-preview { width: 75px; height: 75px; border-radius: 10px; border: 2px dashed #ccc; object-fit: cover; cursor: pointer; }
@@ -51,17 +42,38 @@
   <div class="header"><h1>HUAHIN.PROPERTIES</h1></div>
 
   <div class="container">
+    <div id="appointPage" class="card" style="display:none;">
+      <h3 style="margin-top:0; font-size: 18px;"><i class="fa-solid fa-calendar-plus"></i> นัดหมายลูกค้า</h3>
+      
+      <div class="input-group">
+        <label>Property ID (หลังหลัก)</label>
+        <select id="aPropId"><option value="">โหลดรหัสบ้าน...</option></select>
+      </div>
+
+      <div class="input-group">
+        <label>รหัสย่อย / แผนพาชมเพิ่มเติม <small style="color:#999;">(เช่น M14, HH0007)</small></label>
+        <input type="text" id="aSubPropId" placeholder="ระบุยูนิตย่อยหรือรหัสอื่นที่สนใจ">
+      </div>
+
+      <div class="input-group"><label>ชื่อลูกค้า</label><input type="text" id="aClientName" placeholder="ระบุชื่อลูกค้า"></div>
+      <div class="input-group"><label>วัน-เวลานัดหมาย</label><input type="datetime-local" id="aDate"></div>
+      <div class="input-group"><label>บันทึกเพิ่มเติม</label><textarea id="aNotes" rows="2"></textarea></div>
+      
+      <button class="menu-btn" onclick="handleAddAppoint()">บันทึกการนัดหมาย</button>
+      <button class="menu-btn" onclick="showVisitPage()" style="background:#eee; color:#333;">กลับ</button>
+    </div>
+
     <div id="visitPage" style="display:none;">
       <div class="agent-status-card">
         <img id="vAgentImg" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="agent-img-big">
         <div style="text-align: left;">
           <div style="font-weight: 600; font-size: 14px;"><span id="vDispName">...</span> <small id="vDispRole" style="color:#888;">[Agent]</small></div>
-          <div style="font-size: 11px; color:#666;">ID: <span id="vDispId">...</span> <span id="vStatusPill" class="status-pill-mini">...</span></div>
+          <div style="font-size: 11px; color:#666;">ID: <span id="vDispId">...</span> <span id="vStatusPill" class="status-pill">...</span></div>
         </div>
       </div>
       <div id="checkinForm" class="card">
         <div class="input-group"><label>Property ID</label><select id="vPropId"><option value="">โหลดรหัส...</option></select></div>
-        <div class="input-group"><label>ยูนิต / รหัสย่อย</label><input type="text" id="vSubPropId" placeholder="เช่น M14, C2"></div>
+        <div class="input-group"><label>ยูนิต / รหัสย่อย</label><input type="text" id="vSubPropId" placeholder="ระบุเลขแปลง"></div>
         <div class="input-group"><label>ชื่อลูกค้า</label><input type="text" id="vClientName"></div>
         <div class="input-group">
           <label>ถ่ายรูป (2 รูป)</label>
@@ -70,8 +82,7 @@
             <input type="file" id="file1" style="display:none" onchange="previewImg(this, 'vImg1')"><input type="file" id="file2" style="display:none" onchange="previewImg(this, 'vImg2')">
           </div>
         </div>
-        <button class="menu-btn" onclick="getLocation()" style="background:#4285F4;"><i class="fa-solid fa-location-crosshairs"></i> เช็คอิน GPS</button>
-        <div class="input-group"><label>บันทึกเพิ่มเติม</label><textarea id="vNotes" rows="2"></textarea></div>
+        <button class="menu-btn" onclick="getLocation()" style="background:#4285F4; padding: 12px;"><i class="fa-solid fa-location-dot"></i> เช็คอิน GPS</button>
         <button class="menu-btn" onclick="handleRecordVisit()">ยืนยันข้อมูล</button>
         <button class="menu-btn" onclick="switchPage('historyPage')" style="background:#666; font-size: 12px; padding: 10px;">ดูประวัติงาน</button>
       </div>
@@ -92,7 +103,7 @@
       <div class="input-group"><label>รหัสผ่าน</label><input type="password" id="lPass"><i class="fa-solid fa-eye" style="position:absolute;right:12px;top:32px;color:#999;" onclick="togglePass('lPass')"></i></div>
       <button class="menu-btn" onclick="handleLogin()">Login</button>
     </div>
-    <div id="appointPage" class="card" style="display:none;"><h3 style="margin-top:0; font-size: 16px;"><i class="fa-solid fa-calendar-check"></i> นัดหมาย</h3><div class="input-group"><label>Property ID</label><select id="aPropId"><option value="">โหลดรหัส...</option></select></div><div class="input-group"><label>ชื่อลูกค้า</label><input type="text" id="aClientName"></div><div class="input-group"><label>วัน-เวลา</label><input type="datetime-local" id="aDate"></div><button class="menu-btn" onclick="handleAddAppoint()">บันทึกนัดหมาย</button></div>
+    
     <div id="propertiesPage" style="display:none;"><div id="propertiesList"></div></div>
   </div>
 
@@ -109,9 +120,11 @@
 
     async function initApp() {
       const ph = localStorage.getItem('agent_phone'), ps = localStorage.getItem('agent_pass');
+      const urlParams = new URLSearchParams(window.location.search);
+      const target = urlParams.get('page');
       if (ph && ps) {
         const res = await fetch(`${API_URL}?action=login&phone=${ph}&password=${ps}`).then(r => r.json());
-        if (res?.success) { globalProfile = res.profile; showVisitPage(); } 
+        if (res?.success) { globalProfile = res.profile; if(target==='properties') openProperties('home'); else if(target==='visit') showVisitPage(); else showVisitPage(); } 
         else switchPage('loginPage');
       } else switchPage('loginPage');
     }
@@ -123,6 +136,21 @@
       document.getElementById('aPropId').innerHTML = options;
     }
 
+    async function handleAddAppoint() {
+      const data = { 
+        action: "addAppoint", agentId: globalProfile.agentId, agentName: globalProfile.name, 
+        propertyId: document.getElementById('aPropId').value, 
+        subPropertyId: document.getElementById('aSubPropId').value, // รหัสย่อยเพิ่มเติม
+        clientName: document.getElementById('aClientName').value, 
+        date: document.getElementById('aDate').value, notes: document.getElementById('aNotes').value 
+      };
+      if(!data.propertyId || !data.date) return Swal.fire('เตือน', 'เลือก Property และระบุวันที่', 'warning');
+      Swal.showLoading();
+      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(data) }).then(r => r.json());
+      Swal.close();
+      if(res.success) Swal.fire('สำเร็จ', 'บันทึกนัดหมายเรียบร้อย', 'success').then(() => showVisitPage());
+    }
+
     async function loadHistory() {
       document.getElementById('historyList').innerHTML = '<div style="padding:20px;text-align:center;font-size:12px;">กำลังโหลด...</div>';
       const res = await fetch(`${API_URL}?action=getVisitHistory&agentId=${globalProfile.agentId}`).then(r => r.json());
@@ -131,21 +159,10 @@
         let stClass = "pill-Pending";
         if(item.status.toLowerCase().includes("appro")) stClass = "pill-Appro";
         else if(item.status.toLowerCase().includes("rejec")) stClass = "pill-Rejected";
-        
         const displayId = item.subPropertyId ? `${item.propertyId} (${item.subPropertyId})` : item.propertyId;
-
         return `<div class="hist-item">
-          <div class="hist-main">
-            <img class="hist-thumb" src="${item.propImg}">
-            <div class="hist-info">
-              <b>${displayId}</b>
-              <small>ลูกค้า: ${item.clientName}</small>
-            </div>
-          </div>
-          <div class="hist-status">
-            <div class="status-pill ${stClass}">${item.status}</div>
-            <small>${item.date.split(' ')[0]}</small>
-          </div>
+          <div class="hist-main"><img class="hist-thumb" src="${item.propImg}"><div class="hist-info"><b>${displayId}</b><small>ลูกค้า: ${item.clientName}</small></div></div>
+          <div class="hist-status"><div class="status-pill ${stClass}">${item.status}</div><small>${item.date.split(' ')[0]}</small></div>
         </div>`;
       }).join('');
     }
@@ -155,15 +172,14 @@
       document.getElementById('vDispName').innerText = p.name;
       document.getElementById('vDispId').innerText = p.agentId;
       document.getElementById('vAgentImg').src = p.imgUrl || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
-      const status = p.status ? p.status.toLowerCase() : 'pending';
-      const badge = document.getElementById('vStatusPill');
-      badge.innerText = p.status;
-      if (status.includes('appro') || p.roleDisplay === 'Admin') {
-        badge.className = "status-pill-mini pill-Appro";
+      const pill = document.getElementById('vStatusPill');
+      pill.innerText = p.status;
+      if (p.status.toLowerCase().includes('appro') || p.roleDisplay === 'Admin') {
+        pill.className = "status-pill pill-Appro";
         document.getElementById('checkinForm').style.display = 'block'; document.getElementById('lockMessage').style.display = 'none';
         fetchPropertyIds(); 
       } else {
-        badge.className = "status-pill-mini pill-Pending";
+        pill.className = "status-pill pill-Pending";
         document.getElementById('checkinForm').style.display = 'none'; document.getElementById('lockMessage').style.display = 'block';
       }
       switchPage('visitPage');
@@ -186,6 +202,7 @@
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       if(id === 'visitPage') document.getElementById('btnCheckin').classList.add('active');
       if(id === 'historyPage') loadHistory();
+      if(id === 'appointPage') { document.getElementById('btnAppoint').classList.add('active'); fetchPropertyIds(); }
     }
 
     function togglePass(id) { const x = document.getElementById(id); x.type = x.type === "password" ? "text" : "password"; }
