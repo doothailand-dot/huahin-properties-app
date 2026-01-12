@@ -8,108 +8,82 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         :root { --line-green: #06c755; --bg-light: #f4f7f6; }
-        body { font-family: 'Kanit', sans-serif; background-color: var(--bg-light); margin-bottom: 80px; transition: 0.3s; }
-        
-        /* สไตล์หน้า Login (สีดำ) */
-        #loginPage { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .login-card { background: #1e1e1e; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; color: white; border: 1px solid #333; }
-
-        /* สไตล์ส่วนหัว (เขียว) */
+        body { font-family: 'Kanit', sans-serif; background-color: var(--bg-light); margin-bottom: 80px; }
         .header-nav { background-color: var(--line-green); color: white; padding: 15px; text-align: center; font-weight: bold; position: sticky; top: 0; z-index: 1000; }
-        
-        /* สไตล์รายการ (แบบ List) */
         .prop-item { background: white; border-bottom: 1px solid #eee; padding: 15px; display: flex; align-items: center; }
-        .thumb { width: 85px; height: 85px; border-radius: 12px; object-fit: cover; margin-right: 15px; border: 1px solid #eee; }
+        .thumb { width: 85px; height: 85px; border-radius: 12px; object-fit: cover; margin-right: 15px; }
         .info { flex-grow: 1; }
-        .info h6 { margin: 0; font-weight: bold; font-size: 1rem; }
-        .price { color: var(--line-green); font-weight: bold; font-size: 1.1rem; margin-top: 5px; }
-        
-        /* เมนูล่าง */
+        .price { color: var(--line-green); font-weight: bold; font-size: 1.1rem; }
         .footer-nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; padding: 10px 0; z-index: 1000; }
         .nav-btn { flex: 1; text-align: center; color: #888; text-decoration: none; font-size: 0.7rem; }
         .nav-btn.active { color: var(--line-green); }
         .nav-btn i { font-size: 1.5rem; display: block; }
-
-        #mainApp { display: none; }
+        #loginPage { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; z-index: 9999; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
-
     <div id="loginPage">
-        <div class="login-card">
+        <div class="p-4 bg-dark text-white rounded-4 shadow text-center" style="width:320px;">
             <h4 class="mb-4">เข้าสู่ระบบ</h4>
-            <input type="tel" id="tel" class="form-control mb-3" placeholder="เบอร์โทรศัพท์">
-            <input type="password" id="pass" class="form-control mb-4" placeholder="รหัสผ่าน">
-            <button class="btn btn-warning w-100 fw-bold" onclick="handleLogin()">Login</button>
+            <input type="tel" id="u" class="form-control mb-2" placeholder="เบอร์โทรศัพท์">
+            <input type="password" id="p" class="form-control mb-4" placeholder="รหัสผ่าน">
+            <button class="btn btn-warning w-100 fw-bold" onclick="login()">เข้าใช้งาน</button>
         </div>
     </div>
 
-    <div id="mainApp">
+    <div id="app" style="display:none;">
         <div class="header-nav shadow-sm">HUAHIN.PROPERTIES</div>
-        <div id="listBody"></div>
-        <div class="footer-nav">
+        <div id="list"></div>
+        <div class="footer-nav shadow">
             <a href="#" class="nav-btn active"><i class="bi bi-house-door-fill"></i>สต็อก</a>
             <a href="#" class="nav-btn"><i class="bi bi-calendar-check"></i>นัดหมาย</a>
             <a href="#" class="nav-btn"><i class="bi bi-pencil-square"></i>เช็คอิน</a>
-            <a href="javascript:location.reload()" class="nav-item"><i class="bi bi-box-arrow-right"></i>ออก</a>
+            <a href="javascript:location.reload()" class="nav-btn"><i class="bi bi-box-arrow-right"></i>ออก</a>
         </div>
     </div>
 
-    <div class="modal fade" id="popModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
-            <div class="modal-header bg-success text-white"><h5>ข้อมูลทรัพย์</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
-            <div id="popBody" class="modal-body"></div>
-        </div></div>
-    </div>
+    <div class="modal fade" id="m" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content"><div class="modal-header bg-success text-white"><h5>ข้อมูลทรัพย์</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div id="mb" class="modal-body"></div></div>
+    </div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const API = "https://script.google.com/macros/s/AKfycbwSuBmFRK8OKfsBPt_XEeAYHPg2uW_qc1cwh2lIR5yUQB6q5r1VyNnhUqieH_BKRH08qA/exec"; 
-        const ADMIN_PH = "0812345678"; 
-        const ADMIN_PW = "Admin1234";
-        let isAdm = false; let store = [];
+        const API = "https://script.google.com/macros/s/AKfycbwSuBmFRK8OKfsBPt_XEeAYHPg2uW_qc1cwh2lIR5yUQB6q5r1VyNnhUqieH_BKRH08qA/exec";
+        const AD_PH = "0812345678"; const AD_PW = "Admin1234";
+        let isAd = false; let store = [];
 
-        function handleLogin() {
-            const p = document.getElementById('tel').value; 
-            const pw = document.getElementById('pass').value;
-            if(!p || !pw) return alert("กรุณากรอกข้อมูล");
-            isAdm = (p === ADMIN_PH && pw === ADMIN_PW);
+        function login() {
+            const u = document.getElementById('u').value; const p = document.getElementById('p').value;
+            if(!u || !p) return alert("กรุณากรอกข้อมูล");
+            isAd = (u === AD_PH && p === AD_PW);
             document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
-            getData();
+            document.getElementById('app').style.display = 'block';
+            load();
         }
 
-        async function getData() {
-            const body = document.getElementById('listBody');
+        async function load() {
             try {
-                const res = await fetch(API + "?action=read");
-                store = await res.json();
+                const r = await fetch(API + "?action=read");
+                store = await r.json();
                 let h = '';
-                store.forEach((item, i) => {
-                    h += `
-                    <div class="prop-item">
-                        <img src="${item.image_url}" class="thumb" onerror="this.src='https://via.placeholder.com/100'">
-                        <div class="info">
-                            <h6>${item.property_id} <small class="badge bg-light text-dark border">${item.status || 'available'}</small></h6>
-                            <div class="price">฿ ${item.price || '-'}</div>
-                            <div class="mt-2">
-                                <button class="btn btn-success btn-sm py-0" onclick="openPop(${i})">รายละเอียด</button>
-                                ${isAdm ? `<a href="${API}" target="_blank" class="btn btn-warning btn-sm py-0 ms-1">Admin</a>` : ''}
-                            </div>
-                        </div>
-                    </div>`;
+                store.forEach((it, i) => {
+                    h += `<div class="prop-item"><img src="${it.image_url}" class="thumb" onerror="this.src='https://via.placeholder.com/100'">
+                          <div class="info"><h6>${it.property_id} <span class="badge bg-light text-success border border-success">${it.status || 'available'}</span></h6>
+                          <div class="price">฿ ${it.price || '-'}</div><div class="mt-2">
+                          <button class="btn btn-success btn-sm py-0" onclick="pop(${i})">รายละเอียด</button>
+                          ${isAd ? `<a href="${API}" target="_blank" class="btn btn-warning btn-sm py-0 ms-1">Admin</a>` : ''}
+                          </div></div></div>`;
                 });
-                body.innerHTML = h;
-            } catch (e) { body.innerHTML = "Error loading data."; }
+                document.getElementById('list').innerHTML = h;
+            } catch (e) { document.getElementById('list').innerHTML = "โหลดล้มเหลว"; }
         }
 
-        function openPop(i) {
-            const item = store[i];
-            let content = '<div class="row">';
-            for (let key in item) { content += `<div class="col-6 mb-2 border-bottom"><strong>${key}:</strong><br>${item[key] || '-'}</div>`; }
-            content += '</div>';
-            document.getElementById('popBody').innerHTML = content;
-            new bootstrap.Modal(document.getElementById('popModal')).show();
+        function pop(i) {
+            const it = store[i]; let c = '<div class="row">';
+            for (let k in it) { c += `<div class="col-6 mb-2 border-bottom"><strong>${k}:</strong><br>${it[k] || '-'}</div>`; }
+            c += '</div>'; document.getElementById('mb').innerHTML = c;
+            new bootstrap.Modal(document.getElementById('m')).show();
         }
     </script>
 </body>
