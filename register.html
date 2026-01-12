@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Hua Hin Properties</title> <style>
+        :root { --primary-color: #28a745; --secondary-color: #2c3e50; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .register-container { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        h2 { color: var(--secondary-color); text-align: center; margin-bottom: 10px; }
+        p.subtitle { text-align: center; color: #666; font-size: 0.9em; margin-bottom: 25px; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .btn-submit { width: 100%; padding: 15px; background-color: var(--primary-color); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-submit:hover { background-color: #218838; }
+        #message { margin-top: 20px; padding: 10px; border-radius: 5px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="register-container">
+    <h2>สมัครเข้าใช้งานระบบ</h2>
+    <p class="subtitle">หัวหิน พร็อพเพอร์ตี้ แพลตฟอร์ม</p>
+    
+    <form id="registrationForm">
+        <div class="form-group">
+            <label>ชื่อ-นามสกุล</label>
+            <input type="text" id="fullname" name="fullname" placeholder="ตัวอย่าง: สมชาย ใจดี" required>
+        </div>
+        
+        <div class="form-group">
+            <label>อีเมล (ต้องเป็น Gmail เท่านั้น)</label>
+            <input type="email" id="email" name="email" placeholder="example@gmail.com" required>
+        </div>
+        
+        <div class="form-group">
+            <label>เบอร์โทรศัพท์</label>
+            <input type="tel" id="phone" name="phone" placeholder="081-234-5678" required>
+        </div>
+        
+        <div class="form-group">
+            <label>ประเภทผู้ใช้งานที่ต้องการสมัคร</label>
+            <select id="role" name="role" required>
+                <option value="">-- กรุณาเลือก --</option>
+                <option value="Agent">เอเจนต์ (Agent)</option>
+                <option value="Tenant">ผู้เช่า (Tenant)</option>
+                <option value="Owner">เจ้าของบ้าน (Owner)</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">ส่งข้อมูลลงทะเบียน</button>
+    </form>
+    
+    <div id="message"></div>
+</div>
+
+<script>
+    const form = document.getElementById('registrationForm');
+    const msgDiv = document.getElementById('message');
+    const btn = document.getElementById('submitBtn');
+
+    form.onsubmit = function(e) {
+        e.preventDefault();
+        btn.disabled = true;
+        btn.innerText = 'กำลังส่งข้อมูล...';
+        
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        // หมายเหตุ: ตรงนี้ต้องนำ URL ของ Web App จาก Google Apps Script มาใส่ในภายหลัง
+        const webAppUrl = 'YOUR_APPS_SCRIPT_WEB_APP_URL';
+
+        fetch(webAppUrl, {
+            method: 'POST',
+            mode: 'no-cors', // สำคัญสำหรับการส่งข้อมูลข้าม Domain
+            cache: 'no-cache',
+            body: JSON.stringify(data)
+        })
+        .then(() => {
+            msgDiv.style.display = 'block';
+            msgDiv.style.backgroundColor = '#d4edda';
+            msgDiv.style.color = '#155724';
+            msgDiv.innerText = 'ลงทะเบียนสำเร็จ! โปรดรอแอดมินตรวจสอบและอนุมัติสิทธิ์การเข้าใช้งาน';
+            form.reset();
+            btn.disabled = false;
+            btn.innerText = 'ส่งข้อมูลลงทะเบียน';
+        })
+        .catch(err => {
+            msgDiv.style.display = 'block';
+            msgDiv.style.backgroundColor = '#f8d7da';
+            msgDiv.style.color = '#721c24';
+            msgDiv.innerText = 'เกิดข้อผิดพลาด: ' + err;
+            btn.disabled = false;
+        });
+    };
+</script>
+
+</body>
+</html>
